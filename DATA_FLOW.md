@@ -4,7 +4,7 @@
 
 ## The starting point: business information
 
-The saved business profile, active services and approved knowledge provide the facts used by the website generator and assistant. Unapproved knowledge is excluded from assistant instructions. An owner's design preference can guide appearance; it cannot replace a business fact.
+The saved business profile, active services and approved knowledge provide the facts used by the website generator and assistant. Unapproved knowledge is excluded from assistant instructions. An owner's design preference can guide appearance; it cannot replace a business fact. Selected service skills, shared safety/memory rules and registered general reference notes are loaded explicitly by the server.
 
 ```mermaid
 flowchart LR
@@ -32,7 +32,7 @@ Full draft/published knowledge and agent-version control remain required. Websit
 ## 2. Website generation and publishing
 
 1. The owner provides a brief or approved website change request.
-2. The server reads business facts, selected service skills and saved design preferences.
+2. The server reads business facts, selected service skills, reference notes and saved design preferences.
 3. Gemini produces content and original page HTML/CSS. Pexels supplies photography when requested.
 4. The platform checks factual content, routes and safe code; bounded repairs/fallbacks handle some failures.
 5. A successful result is saved as a private draft and displayed for review. Progress messages alone do not count as a saved website.
@@ -40,10 +40,12 @@ Full draft/published knowledge and agent-version control remain required. Websit
 
 The current workflow checks a verification state before publication. Independent ownership proof and complete preview protections remain to be added. Generation retries preserve pages during the current request; recovery after a process restart needs durable jobs.
 
+Owners/managers can clear saved website preferences for the selected business or project scope. The server checks permission and the current revision; clearing preferences leaves the published release in place.
+
 ## 3. Customer chat, browser voice and lead capture
 
 1. The visitor opens the assistant on the website.
-2. The server resolves the website/business and prepares approved assistant context.
+2. The server resolves the website/business and prepares approved assistant context, including calendar/email availability from that business's actual connection permissions.
 3. Gemini handles text replies; ElevenLabs handles the browser voice session.
 4. Callback details and customer requests are validated and saved as a contact/lead.
 5. The inbox shows saved enquiries and automation results.
@@ -65,3 +67,5 @@ The lead stays saved when automation fails. More calendar providers, full openin
 **Usage:** provider attempts and reported charges feed a scoped ledger. Scheduled work and signed webhooks reconcile delayed records. Recorded charges and estimated costs have distinct labels; billing subscriptions are separate unfinished work.
 
 **Project documents:** a permitted user connects a GitHub repository. The server reads an allowed document/image catalog, stores the connection and returns sanitised content to the viewer. Private tokens stay encrypted. Viewing a repository `SKILL.md` does not execute it or change the platform's AI instructions.
+
+**AI checks:** service/capability `EVALS.md` files drive a separate check runner. They never enter customer prompts. Current deterministic checks cover selected safety, scope, memory and factual-content scenarios; larger model/audio datasets and release approval remain required.

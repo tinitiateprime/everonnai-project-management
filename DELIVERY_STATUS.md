@@ -9,8 +9,8 @@ This is the simple comparison with the two requirement documents. "Implemented" 
 | Area | Implemented today | Still required by the documents | Overall progress |
 | --- | --- | --- | --- |
 | Accounts and onboarding | Workspace signup, team roles and assistant testing are implemented. | Independent ownership proof, account recovery/MFA and complete phone tests. | Partly complete |
-| Knowledge and settings | Approved FAQs, business settings, service skills and website preferences are implemented. | Published knowledge/agent versions, document retrieval, answer sources and governed memory. | Partly complete |
-| AI safety and changes | Shared/HVAC guardrails, approved-context composition and factual/code validators are implemented. | Real text/audio evaluation, source explanations and release-quality gates. | Partly complete |
+| Knowledge and settings | Approved FAQs, service skills, general reference notes, memory policy and scoped website preferences/reset are implemented. | Published knowledge/agent versions, document retrieval, answer-level citations and full assistant memory. | Partly complete |
+| AI safety and changes | Shared/HVAC guardrails, explicit Markdown loading, permission-aware action guidance, factual/code validators and selected executable evaluations are implemented. | Larger real-model/audio datasets, plan-aware typed tools and release-quality gates. | Partly complete |
 | Phone calls and languages | Browser voice, contact extraction and selected emergency guidance are implemented. | Real inbound lines, bilingual calls, transfers, accurate audio capture and tested fallback. | Partly complete |
 | Chat and texting | Website chat and lead capture are implemented. | Standalone lightweight widget, two-way SMS, consent/opt-out and human takeover. | Partly complete |
 | Websites | Original generated drafts, platform forms/assistant controls, safe rendering, publishing and rollback are implemented. | Premium design approval, durable generation, custom domains, preview protection and search/capacity checks. | Partly complete |
@@ -50,7 +50,7 @@ Dates, effort and team assignments need agreement. The original phase estimates 
 - [ ] Provider results, costs, recovery and support procedures are verified.
 - [ ] Client acceptance is recorded against the delivered version.
 
-Recorded engineering checks from 6 October: **127 tests passed; lint and production build passed.** The reviewed application files still match that evidence snapshot. These checks cover existing features; complete execution of the 60 source acceptance scenarios and client sign-off remains required.
+Recorded engineering checks from 6 October: **132 tests passed; 16 deterministic AI evaluations passed; lint and production build passed.** Website and customer-repository browser checks also passed, including preference reset, document rendering and permission/revision protection. Browser checks use disposable data and simulated providers. Two optional real Gemini evaluations remain unverified because the configured project's prepaid credits are depleted; the user deferred that retest until billing is restored. These checks cover selected features; complete execution of the 60 source acceptance scenarios and client sign-off remains required.
 
 ## Source references for the delivery team
 

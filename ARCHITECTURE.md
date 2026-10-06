@@ -31,7 +31,7 @@ The server authorises access before reading business data or creating provider s
 | Dashboard | Business profile, knowledge, website review, assistant tests, enquiries, appointments, team and usage |
 | Server APIs | Check the user's role/business, validate requests and coordinate workflows |
 | Business database | Store separate business workspaces, profiles, services, knowledge, contacts, leads, conversations and appointments |
-| AI runtime | Combine approved business facts with shared rules, service skills and capability instructions |
+| AI runtime | Combine approved business facts with shared rules, service skills, verified reference notes and task-specific workflow availability |
 | Website Studio | Generate original page HTML/CSS, validate facts/code, manage drafts and publish approved releases |
 | Assistant channels | Gemini text replies and ElevenLabs browser voice with lead capture and booking actions |
 | Google integrations | Authorised calendar availability/event creation and Gmail owner summaries |
@@ -48,7 +48,9 @@ The current roles are owner, manager, agent and viewer. Broader brand/operator i
 
 Gemini creates original page layouts and CSS within the platform's navigation, safety and interaction rules. The platform adds the working forms/chat/booking controls and validates generated content. Some older saved publications retain a compatibility renderer until an approved replacement is published.
 
-The runtime loads approved Markdown instruction files from `ai/`: shared rules, capability skills and the HVAC domain pack. Website design preferences and recent approved change requests are saved per business/project. Full assistant memory and `MEMORY.md` are still planned.
+The server explicitly loads versioned Markdown from `ai/`: shared rules, capability skills, the selected service pack, `PLUGINS.md` action guidance and `MEMORY.md` memory rules. `SOURCES.md` contributes verified general reference notes separately from business facts. Calendar/email availability reflects the business's connection permissions; server checks still control every action.
+
+Website design preferences and recent approved change requests are saved per business/project. Owners and managers can clear saved preferences with revision protection. Full long-term assistant memory remains planned. `EVALS.md` supplies executable checks and stays outside customer prompts.
 
 ## Architecture work still required
 
