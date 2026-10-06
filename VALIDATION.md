@@ -7,14 +7,16 @@ Review date: 6 October 2026. These checks validate the Markdown planning pack, n
 | Published file format | All content files are Markdown; no TSV/JSON/CSV, DOCX, scripts or binaries |
 | Hierarchy | 22 module overviews and 102 uniquely identified tickets |
 | Business coverage | 76 business requirements each have a ticket |
+| Client readability | Short project overview; all 76 deliverables use plain progress and next actions; technical navigation is in TEAM_GUIDE.md |
+| Requested README cleanup | Repository-connection instructions removed |
 | Requirement coverage | 721 formal source IDs plus 25 scaffolding rows; all 746 assigned |
 | Acceptance coverage | All 60 source AT scenarios and required criteria retained |
 | Stories / decisions | 72 US and 34 D records retained |
 | Ticket dimensions | All tickets contain business/technical, DB, UI, mapping, backend, AI, QA and deployment sections |
 | Source mappings | Ticket/register references validated in both directions |
-| Relative links / anchors | 7810 checked; no missing target or anchor |
+| Relative links / anchors | 7743 checked; no missing target or anchor |
 | Dependencies | All targets resolve; graph has no cycles |
-| Customer viewer limits | 185 Markdown files at check; all below 2 MB; total pack below 300-document limit |
+| Customer viewer limits | 186 Markdown files at check; all below 2 MB; total pack below 300-document limit |
 | Obvious secrets / private local paths | No matched access-token/private-key/absolute-user-path patterns; no environment values included |
 | Client acceptance | Pending throughout; no sign-off fabricated |
 

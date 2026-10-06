@@ -1,82 +1,192 @@
-# Business deliverables
+# Business delivery checklist
 
-All 76 source business requirements have individual tickets. The engineering column reflects the inspected current slice; acceptance is a separate client decision and is pending for every business requirement. All eight implementation/verification dimensions are inside each ticket.
+This checklist shows what the client will receive and the next step for each deliverable. Start with the short [project overview](README.md) for the overall picture.
 
-| Requirement | Ticket | Client outcome | Source priority | Source phase | Engineering | Client acceptance |
-| --- | --- | --- | --- | --- | --- | --- |
-| [BR-001](requirements/BR.md#br-001) | [EVN-VOX-001](modules/04-telephone-voice-language/tickets/EVN-VOX-001.md) | Answer every call. Every inbound call to a client's business number is answered around the clock in the client's name, by the AI or, when configured, by a person. | Must | P1 | Planned | Pending |
-| [BR-002](requirements/BR.md#br-002) | [EVN-VOX-002](modules/04-telephone-voice-language/tickets/EVN-VOX-002.md) | Capture the job accurately. Job details (who, where, what, how urgent, callback number) are captured accurately, and critical details are confirmed by read-back. | Must | P1 | Partial | Pending |
-| [BR-003](requirements/BR.md#br-003) | [EVN-VOX-003](modules/04-telephone-voice-language/tickets/EVN-VOX-003.md) | Natural, responsive conversation. Conversations feel natural and responsive; callers do not experience long silences and can interrupt. | Must | P1 | Partial | Pending |
-| [BR-004](requirements/BR.md#br-004) | [EVN-AIQ-004](modules/03-ai-governance-evaluation/tickets/EVN-AIQ-004.md) | Truthful and safe AI. The AI never invents facts or prices, resists manipulation, and identifies itself as an AI where required or when sincerely asked. | Must | P1 | Partial | Pending |
-| [BR-005](requirements/BR.md#br-005) | [EVN-VOX-005](modules/04-telephone-voice-language/tickets/EVN-VOX-005.md) | Emergency handling. Emergencies (safety, medical, threats) are recognized and handled with safe advice and immediate human escalation. | Must | P1 | Partial | Pending |
-| [BR-006](requirements/BR.md#br-006) | [EVN-VOX-006](modules/04-telephone-voice-language/tickets/EVN-VOX-006.md) | English and Spanish. The service works in English and Spanish and can switch language mid-call, including when a human takes over. | Must | P1 | Planned | Pending |
-| [BR-007](requirements/BR.md#br-007) | [EVN-INB-007](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-007.md) | Owner summary within 30 seconds. The owner receives a clear summary within 30 seconds of every call. | Must | P1 | Partial | Pending |
-| [BR-008](requirements/BR.md#br-008) | [EVN-INB-008](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-008.md) | Calendar booking. Appointments can be booked directly into the client's calendar without double-booking. | Should | P1 | Partial | Pending |
-| [BR-009](requirements/BR.md#br-009) | [EVN-VOX-009](modules/04-telephone-voice-language/tickets/EVN-VOX-009.md) | Keep existing numbers. Clients keep their existing number (forwarding, new number or porting) with no disruption to their business. | Must | P1 | Planned | Pending |
-| [BR-010](requirements/BR.md#br-010) | [EVN-BIL-010](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-010.md) | Fraud and cost protection. Clients are protected from fraud and runaway usage costs on their lines. | Must | P1 | Partial | Pending |
-| [BR-011](requirements/BR.md#br-011) | [EVN-CHT-011](modules/05-chat-widget-sms/tickets/EVN-CHT-011.md) | Website chat. Website visitors can chat with the same AI around the clock and become structured leads, with photos where useful. | Must | P1 | Partial | Pending |
-| [BR-012](requirements/BR.md#br-012) | [EVN-CHT-012](modules/05-chat-widget-sms/tickets/EVN-CHT-012.md) | Texting and text-back. Two-way text messaging works, including automatic text-back after a missed call, and opt-out is honored immediately. | Must | P1 | Planned | Pending |
-| [BR-013](requirements/BR.md#br-013) | [EVN-WEB-013](modules/06-website-generation-hosting/tickets/EVN-WEB-013.md) | Chat, call and forms on every site. Every client website includes chat, click-to-call and lead forms out of the box. | Must | P1 | Partial | Pending |
-| [BR-014](requirements/BR.md#br-014) | [EVN-WEB-014](modules/06-website-generation-hosting/tickets/EVN-WEB-014.md) | Private preview in minutes. Every client gets a professional, private website preview within minutes of claiming. | Must | P1 | Partial | Pending |
-| [BR-015](requirements/BR.md#br-015) | [EVN-ONB-015](modules/01-onboarding-tenancy-identity/tickets/EVN-ONB-015.md) | Verify ownership before anything is public. Clients can preview for free; nothing goes public or uses a real phone number until ownership is verified. | Must | P1 | Partial | Pending |
-| [BR-016](requirements/BR.md#br-016) | [EVN-WEB-016](modules/06-website-generation-hosting/tickets/EVN-WEB-016.md) | Custom domains. Clients can use their own domain with automatic security certificates. | Must | P1 | Planned | Pending |
-| [BR-017](requirements/BR.md#br-017) | [EVN-WEB-017](modules/06-website-generation-hosting/tickets/EVN-WEB-017.md) | Search and AI-search ready. Sites are built to be found in local search and by AI answer engines. | Should | P1 | Partial | Pending |
-| [BR-018](requirements/BR.md#br-018) | [EVN-WEB-018](modules/06-website-generation-hosting/tickets/EVN-WEB-018.md) | 1,000 sites per day. The platform can generate and host 1,000 new sites per day. | Must | P2 | Planned | Pending |
-| [BR-019](requirements/BR.md#br-019) | [EVN-WEB-019](modules/06-website-generation-hosting/tickets/EVN-WEB-019.md) | Prevent fake or abusive sites. Fake, impersonating or abusive sites cannot go public, and generated content contains no unverified claims. | Must | P1 | Partial | Pending |
-| [BR-020](requirements/BR.md#br-020) | [EVN-KNW-020](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-020.md) | Approve what the AI knows. Clients control what the AI knows and says and explicitly approve it before going live. | Must | P1 | Partial | Pending |
-| [BR-021](requirements/BR.md#br-021) | [EVN-KNW-021](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-021.md) | Self-service configuration. Clients change greeting, hours, escalation and pricing behavior themselves, with draft, test, publish and rollback. | Must | P1 | Partial | Pending |
-| [BR-022](requirements/BR.md#br-022) | [EVN-ONB-022](modules/01-onboarding-tenancy-identity/tickets/EVN-ONB-022.md) | Test before going live. Clients test the AI by phone and chat before it goes live. | Must | P1 | Partial | Pending |
-| [BR-023](requirements/BR.md#br-023) | [EVN-KNW-023](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-023.md) | Explain and correct. Clients see why the AI said something and can correct it. | Should | P1 | Partial | Pending |
-| [BR-024](requirements/BR.md#br-024) | [EVN-HIL-024](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-024.md) | Always able to reach a human. A caller can always reach a human or is guaranteed a callback; no caller is trapped with the AI. | Must | P1 | Partial | Pending |
-| [BR-025](requirements/BR.md#br-025) | [EVN-HIL-025](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-025.md) | Configurable escalation rules. Escalation rules (who, when, in what order) are configurable per client, with priority cascades and repeated alerts for emergencies. | Must | P1 | Partial | Pending |
-| [BR-026](requirements/BR.md#br-026) | [EVN-HIL-026](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-026.md) | Shared multi-client operator desk. A shared EverOnn operator team serves many clients from one multi-client desk. | Must | P1 pilot, P2 scale | Planned | Pending |
-| [BR-027](requirements/BR.md#br-027) | [EVN-HIL-027](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-027.md) | Client screen-pop and correct greeting. When a call or chat reaches a human, the operator instantly sees which client it is for, the client's details and instructions, the caller's details, why it escalated and what the AI already captured, and can greet in the client's name. | Must | P1 | Planned | Pending |
-| [BR-028](requirements/BR.md#br-028) | [EVN-HIL-028](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-028.md) | No client mix-ups. Operators cannot mix up clients: one client context per interaction, always-visible client identity and no cross-client data. | Must | P1 | Planned | Pending |
-| [BR-029](requirements/BR.md#br-029) | [EVN-HIL-029](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-029.md) | Operator authority per client. Each client defines what operators may and may not do or promise on their behalf. | Must | P1 | Planned | Pending |
-| [BR-030](requirements/BR.md#br-030) | [EVN-HIL-030](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-030.md) | Operator call and chat controls. Operators can hold, transfer to the client's owner or technician with a briefing, schedule a callback, take chats and texts, or hand the caller back to the AI. | Must | P1 | Planned | Pending |
-| [BR-031](requirements/BR.md#br-031) | [EVN-HIL-031](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-031.md) | Supervision. Supervisors see live queues by client and can monitor, whisper, reassign and measure service levels. | Should | P2 | Planned | Pending |
-| [BR-032](requirements/BR.md#br-032) | [EVN-HIL-032](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-032.md) | Staffing and rosters. Operator staffing, shifts, skills and client rosters are managed and measurable. | Should | P2 | Planned | Pending |
-| [BR-033](requirements/BR.md#br-033) | [EVN-HIL-033](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-033.md) | Human quality and audit. Every human intervention is recorded and quality-reviewed, and learnings feed back into the AI. | Must | P1 | Planned | Pending |
-| [BR-034](requirements/BR.md#br-034) | [EVN-HIL-034](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-034.md) | Approvals for sensitive actions. Sensitive actions (for example sending a price or an arrival time) can require owner or operator approval. | Should | P1 | Partial | Pending |
-| [BR-035](requirements/BR.md#br-035) | [EVN-INB-035](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-035.md) | Owner sees human handling. Clients see which interactions were handled by a human, by whom (first name), and the notes. | Must | P1 | Planned | Pending |
-| [BR-036](requirements/BR.md#br-036) | [EVN-HIL-036](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-036.md) | Desk reliability. The desk stays reliable: reloads and network drops do not lose calls, and no two operators take the same interaction. | Must | P1 | Planned | Pending |
-| [BR-037](requirements/BR.md#br-037) | [EVN-INB-037](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-037.md) | Unified inbox. One inbox unifies calls, chats, texts and forms as structured requests with assignment and notes. | Must | P1 | Partial | Pending |
-| [BR-038](requirements/BR.md#br-038) | [EVN-INB-038](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-038.md) | Automated follow-up. Automated follow-up (reminders, text-back sequences, review requests) runs with consent and quiet-hours rules. | Should | P2 | Planned | Pending |
-| [BR-039](requirements/BR.md#br-039) | [EVN-ANL-039](modules/16-business-value-analytics/tickets/EVN-ANL-039.md) | Proof of value. Clients see proof of value: calls answered, jobs captured and estimated recovered revenue. | Must | P1 | Partial | Pending |
-| [BR-040](requirements/BR.md#br-040) | [EVN-BIL-040](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-040.md) | Plans and billing. Subscription plans are data-driven and billed monthly or annually through a hosted payment provider. | Must | P1 | Planned | Pending |
-| [BR-041](requirements/BR.md#br-041) | [EVN-BIL-041](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-041.md) | Metering and limits. Usage is metered and plan allowances are enforced without ever blocking emergency handling. | Must | P1 | Partial | Pending |
-| [BR-042](requirements/BR.md#br-042) | [EVN-BIL-042](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-042.md) | Cost and margin visibility. EverOnn sees cost and margin per client, plan and vendor (including operator minutes), with automatic cost circuit breakers. | Must | P1 | Partial | Pending |
-| [BR-043](requirements/BR.md#br-043) | [EVN-BIL-043](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-043.md) | Published claims match the product. Published pricing, plan contents and product claims always match what the platform delivers, and comparative, savings and results claims are supported by a dated source and approved before they are published. | Must | P1 | Partial | Pending |
-| [BR-044](requirements/BR.md#br-044) | [EVN-VRT-044](modules/10-brands-vertical-packs/tickets/EVN-VRT-044.md) | One suite, many vertical brands. EverOnn runs one platform that is presented outwardly as separate vertical brands, each with its own name, website, templates, vocabulary, pricing, legal pages and sender identity, while sharing one engine, one inbox, one operator desk and one billing system. | Must | P1 | Planned | Pending |
-| [BR-045](requirements/BR.md#br-045) | [EVN-VRT-045](modules/10-brands-vertical-packs/tickets/EVN-VRT-045.md) | Brands are kept apart. A client sees and is served only under its own brand, and the contracting entity, privacy terms and sender identity are always correct for that brand. | Must | P1 | Planned | Pending |
-| [BR-046](requirements/BR.md#br-046) | [EVN-VRT-046](modules/10-brands-vertical-packs/tickets/EVN-VRT-046.md) | Launch a vertical by configuration. A new industry can be launched from a configuration bundle (site templates, content, intake playbooks, starter knowledge, compliance profile, integrations, plans and terms) without new platform development for standard cases. | Must | P1 | Partial | Pending |
-| [BR-047](requirements/BR.md#br-047) | [EVN-VRT-047](modules/10-brands-vertical-packs/tickets/EVN-VRT-047.md) | Vertical readiness gate. A vertical goes live only after its readiness checklist (legal review, compliance profile, evaluation results, expert review of playbooks, integration checks, operator training where needed) has been approved by named people. | Must | P1 | Planned | Pending |
-| [BR-048](requirements/BR.md#br-048) | [EVN-VRT-048](modules/10-brands-vertical-packs/tickets/EVN-VRT-048.md) | Match what customers already rely on. Each vertical offers the capabilities its customers already rely on from their current provider (for example service pages, reviews and local marketing for auto repair; a secure client portal and newsletters for accountants; online ordering for restaurants) by building, embedding or connecting them. | Must | P1 first packs; later by wave | Planned | Pending |
-| [BR-049](requirements/BR.md#br-049) | [EVN-INT-049](modules/11-api-connectors-integrations/tickets/EVN-INT-049.md) | Connect the systems each vertical uses. The platform connects to the shop-management, field-service, practice-management, accounting, agency, calendar and point-of-sale systems each vertical uses, and works fully without any connection. | Should | P1 framework, P2 connectors | Partial | Pending |
-| [BR-050](requirements/BR.md#br-050) | [EVN-ACQ-050](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-050.md) | Target any provider's customers. EverOnn can define any incumbent provider as a target, with its detection signatures, customer sources, published pricing, feature checklist, contract notes, migration playbook and offer, and run the same acquisition process against it without new development. | Must | P1 | Planned | Pending |
-| [BR-051](requirements/BR.md#br-051) | [EVN-ACQ-051](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-051.md) | Prospects with proof of origin. Every prospect has a recorded source, date and evidence of the incumbent relationship, is stored with minimal public business data, is deduplicated across sources, and is never treated as a qualified lead or as a paying customer of the incumbent until verified. | Must | P1 | Planned | Pending |
-| [BR-052](requirements/BR.md#br-052) | [EVN-ACQ-052](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-052.md) | Qualify and track every prospect. Prospects are scored on enquiry-handling gap, current spend, migration complexity and fit, and move through defined pipeline stages with an owner and a next action. | Should | P1 | Planned | Pending |
-| [BR-053](requirements/BR.md#br-053) | [EVN-ACQ-053](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-053.md) | Compliant outreach. Outreach follows email, calling, texting and privacy rules: accurate sender identity, working opt-out, one suppression list across all brands, no automated or AI-voice contact without documented prior consent, and a record of every contact. | Must | P1 | Planned | Pending |
-| [BR-054](requirements/BR.md#br-054) | [EVN-ACQ-054](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-054.md) | Build before asking. Every prospect can be shown a private website preview and a demonstration configured with their own business details before any commitment. | Must | P1 | Partial | Pending |
-| [BR-055](requirements/BR.md#br-055) | [EVN-ACQ-055](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-055.md) | Honest savings comparison. A comparison shows the prospect's total current monthly cost against EverOnn's, including services they must keep, early-termination fees and processing costs, and uses only confirmed figures or clearly labeled estimates. | Must | P1 | Planned | Pending |
-| [BR-056](requirements/BR.md#br-056) | [EVN-MIG-056](modules/13-customer-migration-offboarding/tickets/EVN-MIG-056.md) | Managed migration without service loss. A migration toolkit moves a client from an incumbent with no loss of calls, email, leads or search visibility: content import, domain ownership check and transfer or repointing, email continuity, phone forwarding, parallel run, cut-over and rollback. | Must | P1 basic, P2 advanced | Planned | Pending |
-| [BR-057](requirements/BR.md#br-057) | [EVN-MIG-057](modules/13-customer-migration-offboarding/tickets/EVN-MIG-057.md) | Respect the customer's contract and ownership. Switching respects the customer's contract and ownership: the incumbent's term, notice and fees are recorded and included in the comparison, nothing is cancelled without the customer's written authorization, and only assets the customer owns or may export are moved. | Must | P1 | Planned | Pending |
-| [BR-058](requirements/BR.md#br-058) | [EVN-ANL-058](modules/16-business-value-analytics/tickets/EVN-ANL-058.md) | Acquisition analytics. EverOnn can see, by target, vertical, brand and channel, the prospects, contacts, previews, demonstrations, conversions, time to switch, savings delivered, retention and acquisition cost. | Should | P2 | Planned | Pending |
-| [BR-059](requirements/BR.md#br-059) | [EVN-ORD-059](modules/14-restaurant-ordering/tickets/EVN-ORD-059.md) | Direct online ordering. Restaurant customers can order for pickup online from the restaurant's real menu, with modifiers, tax, pickup time and payment at pickup or by a hosted payment page. | Must | P2 | Planned | Pending |
-| [BR-060](requirements/BR.md#br-060) | [EVN-ORD-060](modules/14-restaurant-ordering/tickets/EVN-ORD-060.md) | AI phone ordering with readback. Callers can place a pickup order by phone; the AI reads back the whole order and gets confirmation, never takes card numbers by voice, transfers allergy and dietary questions to staff, and hands off when unsure. | Must | P2 | Planned | Pending |
-| [BR-061](requirements/BR.md#br-061) | [EVN-ORD-061](modules/14-restaurant-ordering/tickets/EVN-ORD-061.md) | Orders reach the kitchen. Every accepted order reaches the restaurant reliably, through a staff-accept screen, printed tickets or an authorized point-of-sale connection, with no lost or duplicate orders and escalation of orders nobody accepts. | Must | P2 | Planned | Pending |
-| [BR-062](requirements/BR.md#br-062) | [EVN-ORD-062](modules/14-restaurant-ordering/tickets/EVN-ORD-062.md) | Bilingual ordering and tickets. Ordering and kitchen tickets support the languages the restaurant's customers and staff use, starting with English and adding Mandarin and Cantonese after testing on real menus and audio. | Should | P2 English, P3 Mandarin and Cantonese | Planned | Pending |
-| [BR-063](requirements/BR.md#br-063) | [EVN-SEC-063](modules/15-security-privacy-compliance/tickets/EVN-SEC-063.md) | Client data isolation. One client's data is never visible to, or used for, another client. | Must | P1 | Partial | Pending |
-| [BR-064](requirements/BR.md#br-064) | [EVN-SEC-064](modules/15-security-privacy-compliance/tickets/EVN-SEC-064.md) | Consent and disclosure rules. Consent, call-recording and AI-disclosure rules are enforced by the system per jurisdiction. | Must | P1 | Planned | Pending |
-| [BR-065](requirements/BR.md#br-065) | [EVN-SEC-065](modules/15-security-privacy-compliance/tickets/EVN-SEC-065.md) | Compliance profile for each vertical. Regulated verticals run under enforced compliance profiles (health-care privacy, legal, insurance, tax and accounting, food ordering, veterinary) that control disclosures, data handling, permitted subprocessors, prohibited advice and human gating. | Must | P1 framework, P3 health care | Planned | Pending |
-| [BR-066](requirements/BR.md#br-066) | [EVN-SEC-066](modules/15-security-privacy-compliance/tickets/EVN-SEC-066.md) | Clear client terms. Clients accept clear service terms that define EverOnn as a technology provider, the client's responsibility for its own services and communications, data-processing roles, and call-recording and AI-disclosure responsibilities. | Must | P1 | Planned | Pending |
-| [BR-067](requirements/BR.md#br-067) | [EVN-SEC-067](modules/15-security-privacy-compliance/tickets/EVN-SEC-067.md) | Export and deletion. Clients can export or delete their data on request. | Must | P1 | Planned | Pending |
-| [BR-068](requirements/BR.md#br-068) | [EVN-OPS-068](modules/18-reliability-deployment-scale/tickets/EVN-OPS-068.md) | Reliability during outages. Calls are still answered safely during vendor or system outages, and the platform recovers from failures within stated targets. | Must | P1 | Partial | Pending |
-| [BR-069](requirements/BR.md#br-069) | [EVN-OPS-069](modules/18-reliability-deployment-scale/tickets/EVN-OPS-069.md) | Zero-downtime releases. Releases happen without dropping calls. | Must | P1 | Partial | Pending |
-| [BR-070](requirements/BR.md#br-070) | [EVN-ADM-070](modules/17-admin-backoffice/tickets/EVN-ADM-070.md) | Back-office administration. EverOnn staff can administer clients, numbers, plans, prompts, flags and incidents from a back-office. | Must | P1 | Planned | Pending |
-| [BR-071](requirements/BR.md#br-071) | [EVN-INT-071](modules/11-api-connectors-integrations/tickets/EVN-INT-071.md) | API and integrations. Clients and partners can integrate through an API, webhooks and Zapier-style connectors. | Should | P1 | Partial | Pending |
-| [BR-072](requirements/BR.md#br-072) | [EVN-OPS-072](modules/18-reliability-deployment-scale/tickets/EVN-OPS-072.md) | Scale by adding capacity. The platform scales to 1,000 clients, then 10,000, by adding capacity rather than re-architecting. | Must | P2 | Planned | Pending |
-| [BR-073](requirements/BR.md#br-073) | [EVN-SEC-073](modules/15-security-privacy-compliance/tickets/EVN-SEC-073.md) | Security assurance. The platform passes an independent security test and is on a path to SOC 2. | Must | P1 | Partial | Pending |
-| [BR-074](requirements/BR.md#br-074) | [EVN-QA-074](modules/19-testing-client-acceptance/tickets/EVN-QA-074.md) | Accessibility. Dashboards, the desk, the widget and generated sites are accessible (WCAG 2.1 AA). | Must | P1 | Partial | Pending |
-| [BR-075](requirements/BR.md#br-075) | [EVN-OWN-075](modules/20-ownership-handover/tickets/EVN-OWN-075.md) | EverOnn owns everything. EverOnn owns all code, prompts, data and infrastructure accounts, with no vendor lock-in. | Must | P0 | Partial | Pending |
-| [BR-076](requirements/BR.md#br-076) | [EVN-AIQ-076](modules/03-ai-governance-evaluation/tickets/EVN-AIQ-076.md) | Safe AI change control. Changes to AI behavior are tested against safety and quality benchmarks before release and can be rolled back instantly. | Must | P1 | Partial | Pending |
+**Partly built:** some features exist; more work is required. **Planned:** the full deliverable is still to be built. Progress describes development, not client acceptance. No complete business deliverable has been signed off yet.
+
+Select a deliverable to open its detailed ticket. Database, backend, AI, testing and deployment details remain there for the delivery team. The original requirements and priorities are preserved in [source traceability](TRACEABILITY.md).
+
+## Accounts and business setup
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Verify ownership before anything is public](modules/01-onboarding-tenancy-identity/tickets/EVN-ONB-015.md) | Partly built | Independently verify business ownership before public publishing. |
+| [Test before going live](modules/01-onboarding-tenancy-identity/tickets/EVN-ONB-022.md) | Partly built | Provide real phone/chat test journeys before activation. |
+
+## Business knowledge and assistant settings
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Approve what the AI knows](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-020.md) | Partly built | Keep approved information stable while draft edits are reviewed. |
+| [Self-service configuration](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-021.md) | Partly built | Complete draft, test, approval and rollback for permitted business settings. |
+| [Explain and correct](modules/02-knowledge-agent-configuration/tickets/EVN-KNW-023.md) | Partly built | Show answer sources and make corrections traceable. |
+
+## AI safety and quality
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Truthful and safe AI](modules/03-ai-governance-evaluation/tickets/EVN-AIQ-004.md) | Partly built | Complete truthful-answer, disclosure and safety checks across the assistant. |
+| [Safe AI change control](modules/03-ai-governance-evaluation/tickets/EVN-AIQ-076.md) | Partly built | Check quality and safety before changing the assistant. |
+
+## Phone calls and languages
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Answer every call](modules/04-telephone-voice-language/tickets/EVN-VOX-001.md) | Planned | Connect real business phone lines and prove answering and safe message capture. |
+| [Capture the job accurately](modules/04-telephone-voice-language/tickets/EVN-VOX-002.md) | Partly built | Confirm important customer details accurately during real calls. |
+| [Natural, responsive conversation](modules/04-telephone-voice-language/tickets/EVN-VOX-003.md) | Partly built | Test natural conversation, interruptions and response speed on phone calls. |
+| [Emergency handling](modules/04-telephone-voice-language/tickets/EVN-VOX-005.md) | Partly built | Test emergency handling and urgent human escalation on real calls. |
+| [English and Spanish](modules/04-telephone-voice-language/tickets/EVN-VOX-006.md) | Planned | Add and test English/Spanish calls and mid-call language changes. |
+| [Keep existing numbers](modules/04-telephone-voice-language/tickets/EVN-VOX-009.md) | Planned | Verify forwarding and plan number transfers without disrupting service. |
+
+## Website chat and text messages
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Website chat](modules/05-chat-widget-sms/tickets/EVN-CHT-011.md) | Partly built | Complete the external website widget and customer photo handling. |
+| [Texting and text-back](modules/05-chat-widget-sms/tickets/EVN-CHT-012.md) | Planned | Add two-way texting, missed-call replies and immediate opt-out handling. |
+
+## Website creation and publishing
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Chat, call and forms on every site](modules/06-website-generation-hosting/tickets/EVN-WEB-013.md) | Partly built | Verify forms, chat and call actions on each published site. |
+| [Private preview in minutes](modules/06-website-generation-hosting/tickets/EVN-WEB-014.md) | Partly built | Make preview creation reliable and measure the agreed creation time. |
+| [Custom domains](modules/06-website-generation-hosting/tickets/EVN-WEB-016.md) | Planned | Add custom-domain setup and automatic security certificates. |
+| [Search and AI-search ready](modules/06-website-generation-hosting/tickets/EVN-WEB-017.md) | Partly built | Review local-search content, performance and indexing on published pages. |
+| [1,000 sites per day](modules/06-website-generation-hosting/tickets/EVN-WEB-018.md) | Planned | Measure generation and hosting capacity under realistic demand. |
+| [Prevent fake or abusive sites](modules/06-website-generation-hosting/tickets/EVN-WEB-019.md) | Partly built | Complete preview protections, abuse checks and site-removal procedures. |
+
+## Human support and operator desk
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Always able to reach a human](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-024.md) | Partly built | Complete human routing, response coverage and safe fallback. |
+| [Configurable escalation rules](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-025.md) | Partly built | Allow reviewed business rules to trigger the correct escalation. |
+| [Shared multi-client operator desk](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-026.md) | Planned | Build the shared operator desk and prove its staffing model. |
+| [Client screen-pop and correct greeting](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-027.md) | Planned | Show the correct business identity and greeting for each operator task. |
+| [No client mix-ups](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-028.md) | Planned | Prevent customer records and conversations from mixing between businesses. |
+| [Operator authority per client](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-029.md) | Planned | Enforce what operators may do for each business. |
+| [Operator call and chat controls](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-030.md) | Planned | Add tested call-transfer, conversation and messaging controls. |
+| [Supervision](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-031.md) | Planned | Provide authorised supervision and quality-review tools. |
+| [Staffing and rosters](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-032.md) | Planned | Set up shifts, skills and confirmed service coverage. |
+| [Human quality and audit](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-033.md) | Planned | Record human handling quality and auditable actions. |
+| [Approvals for sensitive actions](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-034.md) | Partly built | Require approval before sensitive operator actions. |
+| [Desk reliability](modules/07-human-operations-live-agent-desk/tickets/EVN-HIL-036.md) | Planned | Prove safe reconnect, task assignment and recovery when the desk fails. |
+
+## Enquiries, appointments and follow-up
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Owner summary within 30 seconds](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-007.md) | Partly built | Prove owner summaries arrive within the agreed time after each call. |
+| [Calendar booking](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-008.md) | Partly built | Complete availability rules, confirmations and booking-change workflows. |
+| [Owner sees human handling](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-035.md) | Planned | Show owners what the operator handled and the result. |
+| [Unified inbox](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-037.md) | Partly built | Complete shared inbox assignment, notes and customer-record management. |
+| [Automated follow-up](modules/08-inbox-contacts-booking-followup/tickets/EVN-INB-038.md) | Planned | Add consent-aware follow-up, reminders and delivery tracking. |
+
+## Subscriptions, usage and pricing
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Fraud and cost protection](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-010.md) | Partly built | Enforce abuse controls, usage budgets and customer alerts. |
+| [Plans and billing](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-040.md) | Planned | Connect paid subscriptions, invoices and account billing. |
+| [Metering and limits](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-041.md) | Partly built | Extend usage tracking to all required services and enforce plan limits. |
+| [Cost and margin visibility](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-042.md) | Partly built | Reconcile provider and operator costs with actual charges. |
+| [Published claims match the product](modules/09-plans-billing-usage-margin/tickets/EVN-BIL-043.md) | Partly built | Agree plan features and ensure public claims match the delivered product. |
+
+## Business services and brands
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [One suite, many vertical brands](modules/10-brands-vertical-packs/tickets/EVN-VRT-044.md) | Planned | Add separate service brands with reviewed default settings. |
+| [Brands are kept apart](modules/10-brands-vertical-packs/tickets/EVN-VRT-045.md) | Planned | Keep each brand and its businesses correctly separated. |
+| [Launch a vertical by configuration](modules/10-brands-vertical-packs/tickets/EVN-VRT-046.md) | Partly built | Make new service packs configurable and reviewed. |
+| [Vertical readiness gate](modules/10-brands-vertical-packs/tickets/EVN-VRT-047.md) | Planned | Approve each service pack before launch. |
+| [Match what customers already rely on](modules/10-brands-vertical-packs/tickets/EVN-VRT-048.md) | Planned | Check the tools and workflows customers need before switching. |
+
+## Business-tool connections
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Connect the systems each vertical uses](modules/11-api-connectors-integrations/tickets/EVN-INT-049.md) | Partly built | Complete approved business-tool connections and test actual results. |
+| [API and integrations](modules/11-api-connectors-integrations/tickets/EVN-INT-071.md) | Partly built | Deliver documented, secure partner APIs and integrations. |
+
+## New-customer growth
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Target any provider's customers](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-050.md) | Planned | Build the approved provider-target research process. |
+| [Prospects with proof of origin](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-051.md) | Planned | Record prospect sources and permission to use that information. |
+| [Qualify and track every prospect](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-052.md) | Planned | Track qualification, contact history and conversion stages. |
+| [Compliant outreach](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-053.md) | Planned | Approve outreach channels, permissions and operating rules. |
+| [Build before asking](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-054.md) | Partly built | Create safe prospect previews before requesting commitment. |
+| [Honest savings comparison](modules/12-customer-acquisition-claims/tickets/EVN-ACQ-055.md) | Planned | Make savings comparisons accurate, dated and reviewable. |
+
+## Customer migration
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Managed migration without service loss](modules/13-customer-migration-offboarding/tickets/EVN-MIG-056.md) | Planned | Plan and test migration without losing customer service. |
+| [Respect the customer's contract and ownership](modules/13-customer-migration-offboarding/tickets/EVN-MIG-057.md) | Planned | Document permission, contract obligations and customer ownership. |
+
+## Restaurant ordering
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Direct online ordering](modules/14-restaurant-ordering/tickets/EVN-ORD-059.md) | Planned | Build menu selection, customer checkout and order confirmation. |
+| [AI phone ordering with readback](modules/14-restaurant-ordering/tickets/EVN-ORD-060.md) | Planned | Capture phone orders accurately and read them back before confirmation. |
+| [Orders reach the kitchen](modules/14-restaurant-ordering/tickets/EVN-ORD-061.md) | Planned | Prove orders reach staff or the kitchen and are acknowledged. |
+| [Bilingual ordering and tickets](modules/14-restaurant-ordering/tickets/EVN-ORD-062.md) | Planned | Test the required ordering languages and kitchen-ticket formatting. |
+
+## Data protection and privacy
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Client data isolation](modules/15-security-privacy-compliance/tickets/EVN-SEC-063.md) | Partly built | Complete independent checks of business, brand and operator data separation. |
+| [Consent and disclosure rules](modules/15-security-privacy-compliance/tickets/EVN-SEC-064.md) | Planned | Implement approved consent, recording, disclosure and opt-out workflows. |
+| [Compliance profile for each vertical](modules/15-security-privacy-compliance/tickets/EVN-SEC-065.md) | Planned | Apply the approved privacy and operating rules for each service. |
+| [Clear client terms](modules/15-security-privacy-compliance/tickets/EVN-SEC-066.md) | Planned | Complete reviewed client terms and processing agreements. |
+| [Export and deletion](modules/15-security-privacy-compliance/tickets/EVN-SEC-067.md) | Planned | Provide authorised data export, retention and deletion workflows. |
+| [Security assurance](modules/15-security-privacy-compliance/tickets/EVN-SEC-073.md) | Partly built | Complete security review, key management and incident evidence. |
+
+## Business results and reports
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Proof of value](modules/16-business-value-analytics/tickets/EVN-ANL-039.md) | Partly built | Show evidence-based enquiry, booking and business-value reports. |
+| [Acquisition analytics](modules/16-business-value-analytics/tickets/EVN-ANL-058.md) | Planned | Report prospect conversion and migration results. |
+
+## Platform administration
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Back-office administration](modules/17-admin-backoffice/tickets/EVN-ADM-070.md) | Planned | Build controlled support and administration tools. |
+
+## Service reliability and growth
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Reliability during outages](modules/18-reliability-deployment-scale/tickets/EVN-OPS-068.md) | Partly built | Prove fallback and recovery during provider and system outages. |
+| [Zero-downtime releases](modules/18-reliability-deployment-scale/tickets/EVN-OPS-069.md) | Partly built | Deploy updates without disrupting active customer interactions. |
+| [Scale by adding capacity](modules/18-reliability-deployment-scale/tickets/EVN-OPS-072.md) | Planned | Measure capacity and make additional infrastructure repeatable. |
+
+## Accessibility
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [Accessibility](modules/19-testing-client-acceptance/tickets/EVN-QA-074.md) | Partly built | Review and fix keyboard, screen-reader and mobile accessibility. |
+
+## Ownership and handover
+
+| Business deliverable | Progress | Next step |
+| --- | --- | --- |
+| [EverOnn owns everything](modules/20-ownership-handover/tickets/EVN-OWN-075.md) | Partly built | Confirm account/code ownership and deliver operational handover. |
+
+## Client review checklist
+
+- [ ] Confirm the first service and which deliverables are included in its launch.
+- [ ] Agree priorities, owners and delivery dates.
+- [ ] Review demonstrations and evidence for the agreed outcomes.
+- [ ] Approve the released version and record any agreed remaining work.
+
+See [delivery stages](DELIVERY_PLAN.md) for sequence and [acceptance criteria](ACCEPTANCE.md) for the detailed checks. Customer project-document access and this checklist are additional session deliverables; their details are in [the project documentation module](modules/21-project-documentation-workbench/README.md).
