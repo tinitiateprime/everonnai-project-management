@@ -50,7 +50,7 @@ Dates, effort and team assignments need agreement. The original phase estimates 
 - [ ] Provider results, costs, recovery and support procedures are verified.
 - [ ] Client acceptance is recorded against the delivered version.
 
-Recorded engineering checks from 6 October: **132 tests passed; 16 deterministic AI evaluations passed; lint and production build passed.** Website and customer-repository browser checks also passed, including preference reset, document rendering and permission/revision protection. Browser checks use disposable data and simulated providers. Two optional real Gemini evaluations remain unverified because the configured project's prepaid credits are depleted; the user deferred that retest until billing is restored. These checks cover selected features; complete execution of the 60 source acceptance scenarios and client sign-off remains required.
+Recorded engineering checks from 6 October: **133 tests passed; all 18 AI evaluation cases passed, including two real Gemini checks; lint and production build passed.** The deployed assistant replied successfully. Newer configured Gemini models returned temporary high-demand errors; the existing fallback worked. A page-repair improvement kept the same safety rules and supplied clearer feedback. Real sample generation produced three seven-route designs, passing 42 desktop/mobile checks without overflow or broken images. Website and customer-repository browser regressions also passed with disposable data and simulated providers. These checks cover selected features; premium design approval, the complete generation request on the deployed application, execution of the 60 source acceptance scenarios and client sign-off remains required.
 
 ## Source references for the delivery team
 
