@@ -1,0 +1,50 @@
+# Requirement registers
+
+| Family | Records |
+| --- | --- |
+| [ACC](ACC.md) | 6 |
+| [ACQ](ACQ.md) | 13 |
+| [ADM](ADM.md) | 9 |
+| [AGT](AGT.md) | 8 |
+| [AL](AL.md) | 22 |
+| [ANL](ANL.md) | 4 |
+| [API](API.md) | 8 |
+| [AR](AR.md) | 10 |
+| [ASM](ASM.md) | 9 |
+| [AT](AT.md) | 60 |
+| [BIL](BIL.md) | 10 |
+| [BKG](BKG.md) | 5 |
+| [BO](BO.md) | 11 |
+| [BP](BP.md) | 9 |
+| [BR](BR.md) | 76 |
+| [BRL](BRL.md) | 38 |
+| [CHT](CHT.md) | 13 |
+| [COM](COM.md) | 18 |
+| [CON](CONSTRAINTS.md) | 8 |
+| [CST](CST.md) | 7 |
+| [D](D.md) | 34 |
+| [DEP](DEP.md) | 12 |
+| [DSK](DSK.md) | 26 |
+| [EP](EP.md) | 14 |
+| [EVL](EVL.md) | 10 |
+| [FUP](FUP.md) | 3 |
+| [HIL](HIL.md) | 17 |
+| [INB](INB.md) | 7 |
+| [INT](INT.md) | 5 |
+| [KNW](KNW.md) | 9 |
+| [LT](LT.md) | 6 |
+| [MIG](MIG.md) | 10 |
+| [ONB](ONB.md) | 12 |
+| [ORD](ORD.md) | 10 |
+| [POL](POL.md) | 6 |
+| [RK](RK.md) | 22 |
+| [SCF](SCF.md) | 25 |
+| [SEC](SEC.md) | 18 |
+| [SL](SL.md) | 9 |
+| [TEN](TEN.md) | 7 |
+| [US](US.md) | 72 |
+| [VOX](VOX.md) | 40 |
+| [VRT](VRT.md) | 10 |
+| [WEB](WEB.md) | 18 |
+
+Each record links to a delivery ticket. Allocation establishes planning responsibility; it does not establish implementation or acceptance. All 721 distinct formal source IDs and the 25 numbered scaffolding rows are represented. Narrative architecture and phase conditions are addressed in the delivery/technical/decision guides.
