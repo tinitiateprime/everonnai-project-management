@@ -948,8 +948,8 @@ Current disposition: full source acceptance not evidenced; pending. The linked s
 
 ### Markdown client delivery pack - EVN-PJM-102
 
-- [ ] Verify all tracked source records, ticket sections, relative links and dependency graph.
-- [ ] Publish Markdown-only files to the requested GitHub repository and record the commit.
+- [x] Verify all tracked source records, ticket sections, relative links and dependency graph.
+- [x] Publish Markdown-only files to the requested GitHub repository; initial commit and remote verification are recorded in [VALIDATION.md](VALIDATION.md).
 - [ ] Client connects branch `main` in Project Management and confirms usable navigation.
 - [ ] Client agrees scope/owners/acceptance; documentation publication does not close product tickets.
 

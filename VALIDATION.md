@@ -12,11 +12,17 @@ Review date: 6 October 2026. These checks validate the Markdown planning pack, n
 | Stories / decisions | 72 US and 34 D records retained |
 | Ticket dimensions | All tickets contain business/technical, DB, UI, mapping, backend, AI, QA and deployment sections |
 | Source mappings | Ticket/register references validated in both directions |
-| Relative links / anchors | 7809 checked; no missing target or anchor |
+| Relative links / anchors | 7810 checked; no missing target or anchor |
 | Dependencies | All targets resolve; graph has no cycles |
 | Customer viewer limits | 185 Markdown files at check; all below 2 MB; total pack below 300-document limit |
 | Obvious secrets / private local paths | No matched access-token/private-key/absolute-user-path patterns; no environment values included |
 | Client acceptance | Pending throughout; no sign-off fabricated |
+
+## GitHub publication evidence
+
+The initial Markdown pack was published to `tinitiateprime/everonnai-project-management`, branch `main`, at commit `03b2eaaf41406b78a1f75c81c15ef1fda49c634e`. `git ls-remote origin refs/heads/main` matched that local commit after push. This publication-evidence update is a subsequent documentation commit, visible in repository history.
+
+Publication records the delivery of this pack. It does not certify or deploy the application. No GitHub Issues or external notifications were created.
 
 Engineering labels across tickets: 44 Planned, 54 Partial, 1 Decision required, 3 Implemented. Implemented labels are bounded slices, not full BR compliance. Current application verification is separately qualified in [CURRENT_STATE.md](CURRENT_STATE.md).
 

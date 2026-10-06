@@ -6,7 +6,7 @@ Project: EverOnnAI. Module: [Customer repositories and client delivery documenta
 | --- | --- |
 | Engineering | Implemented - Markdown pack prepared |
 | QA | Documentation validation passes; see linked report |
-| Deployment | Git publication tracked separately from application deployment |
+| Deployment | Markdown published to GitHub main; application deployment remains separate |
 | Business acceptance | Pending client review; no signed acceptance recorded |
 | Owner | Product Owner / client acceptance owner - named person to be assigned |
 | Priority / phase | Session-added scope / current documentation delivery |
@@ -83,8 +83,8 @@ See [documentation validation evidence](../../../VALIDATION.md). These are docum
 
 ## Deployment
 
-- [ ] Publish the reviewed Markdown-only pack to the requested GitHub `main` branch.
-- [ ] Verify the remote Git commit and clean local worktree.
+- [x] Publish the reviewed Markdown-only pack to the requested GitHub `main` branch.
+- [x] Verify the initial published commit `03b2eaaf41406b78a1f75c81c15ef1fda49c634e` matches the remote `main` reference.
 - [ ] User connects the repository in Project Management.
 
 This ticket deploys no application code or production schema. Git publication is the delivery mechanism; the updated hosted app rollout belongs to the existing integration ticket.
