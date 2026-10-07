@@ -16,15 +16,17 @@ The existing five guides are grouped in `current project/` and prefixed with `cu
 
 ## EverOnn project
 
-The three supplied documents are grouped in `everonn project/`. They describe the recommended platform design, intended end-to-end workflows and delivery backlog. Their original contents are preserved.
+The three guides in `everonn project/` have been revised against both EverOnn requirements documents (version 1.0, dated 26 September 2026). They describe the required target architecture, end-to-end workflows and client-readable delivery plan. Source requirements remain complete; short labels and supporting-task breakdowns help with review.
 
 | Document | Purpose |
 | --- | --- |
-| [EverOnn architecture](everonn%20project/everonn-architecture.md) | Recommended platform architecture, component responsibilities, technology choices, security and deployment |
-| [EverOnn end-to-end data flow](everonn%20project/everonn-dataflow.md) | Business activation, customer handling, human escalation, follow-up, billing and quality improvement |
-| [EverOnn delivery Kanban](everonn%20project/everonn-delivery-kanban.md) | Module and ticket backlog across P0 Foundations, P1 Pilot, P2 Scale and P3 Expansion |
+| [EverOnn architecture](everonn%20project/everonn-architecture.md) | Required target architecture, responsibilities, specification technology defaults, phase targets and full decision register |
+| [EverOnn end-to-end data flow](everonn%20project/everonn-dataflow.md) | Activation, channel flows, human acceptance/fallback, sites, migration, ordering, billing, quality and offboarding |
+| [EverOnn delivery Kanban](everonn%20project/everonn-delivery-kanban.md) | Client board, complete requirements, verification checks, phase gates and business/acceptance traceability |
 
-The supplied Kanban contains **15 major modules, 73 submodules/workstreams and 360 detailed tickets**. Its workflow is **Pending → In Progress → Ready for Deploy → Ready for Test → Done**, and all modules and tickets initially remain **Pending** until execution status is updated.
+The revised Kanban contains **15 modules, 77 workstreams and 369 delivery cards**: all 325 numbered engineering requirements, the retained 35 platform/data supporting tasks and nine delivery/quality/handover tasks derived from the specification. It also retains 76 business requirements, 38 business rules, 60 official acceptance tests and 72 user stories, and links the full 34-decision register.
+
+Its workflow is **Pending → In Progress → Ready for Deploy → Ready for Test → Done**. Deployment in this workflow means staging; production release has a separate gate. All cards remain **Pending** as a planning baseline, with no test result, owner assignment or client acceptance asserted.
 
 ## Reading the documents together
 

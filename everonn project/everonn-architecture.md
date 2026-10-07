@@ -1,295 +1,740 @@
-# EverOnn Platform: Recommended Architecture
+# EverOnn Platform Architecture
 
-Source: *EverOnn Platform BRD and Technical Specification* (§11 architecture, §16.7 Live Agent Desk, §20 stack, §21–23 data, security, scale).
+[Delivery Kanban](everonn-delivery-kanban.md) · [End-to-end data flow](everonn-dataflow.md)
 
----
+**Basis:** EverOnn Business Requirements Document and EverOnn Platform BRD and Technical Specification, version 1.0, dated 26 September 2026. **Revision:** 7 October 2026. **Status:** Requirements-based target design; implementation and acceptance require separate evidence.
 
-## 1. Summary
+This guide explains the platform required by the two source documents. It is organised around business capabilities, their supporting services and the controls needed to launch them. Technology recommendations remain subject to the specification's decision and exception process.
 
-EverOnn is a multi-tenant AI front-desk suite: AI voice, chat and SMS agents, generated websites, a human-in-the-loop Live Agent Desk, an inbox with booking and follow-up, and billing. It also includes acquisition and migration tooling.
+## 1. The platform in plain language
 
-**Recommended style: a modular monolith control plane plus separately deployed real-time data-plane services, organised in cells.**
+EverOnn gives a business an always-available front desk. Customers can call, chat, text or submit a form. The assistant uses that business's approved information, captures the request and takes only permitted actions. A person can help when needed. The business sees the outcome in one inbox, with appropriate booking, notifications and follow-up.
 
-- Fast iteration for a small team, with module boundaries that allow later extraction.
-- The latency-critical voice path scales and fails independently.
-- **A control-plane outage must never drop live calls or take sites down (AR-004).**
+The same platform also creates business websites, manages plans and usage, supports multiple industry brands, helps authorised customers switch from an incumbent provider and, in P2, handles restaurant pickup ordering. Regulated-industry launches follow their later readiness gates.
 
-## 2. Guiding principles
+| Business capability | What the client receives | Main requirement groups |
+| --- | --- | --- |
+| Business setup | A private preview, ownership verification, approved settings and tested activation | ONB, TEN, ACC |
+| Approved assistant | Owner-controlled facts, safe actions and versioned changes | KNW, AGT, POL |
+| Phone front desk | Real calls, English/Spanish, confirmed details, booking and transfer | VOX |
+| Chat and text | The same approved assistant with consent-aware messaging | CHT, COM |
+| Human help | Correct client identification, routing, private briefing and an operator desk | HIL, DSK |
+| Inbox and appointments | Requests, assignments, calendar bookings and permitted follow-up | INB, BKG, FUP |
+| Business websites | Private preview, safe editing, approved publication and custom domains | WEB |
+| Commercial operations | Plans, payments, usage, cost and value reporting | BIL, CST, ANL, ADM |
+| Industry brands | One shared engine with separate brand identity and industry configuration | VRT |
+| Customer acquisition and switching | Sourced prospects, truthful comparisons and authorised migration | ACQ, MIG |
+| Restaurant pickup ordering | Real menus, confirmed orders, reliable kitchen receipt and hosted payments | ORD, INT |
+| Security and quality | Isolated data, controlled access, recovery and evidenced release gates | SEC, COM, EVL, LT |
 
-1. One agent brain, many channels (voice, chat and SMS are adapters over one core).
-2. Owner-approved knowledge only; the agent never improvises facts.
-3. Human-in-the-loop is a first-class subsystem.
-4. Provider abstraction everywhere (telephony, STT, TTS, LLM, SMS, email, payments).
-5. Tenant isolation is a hard boundary, enforced structurally and tested.
-6. Secure and compliant by construction (consent, recording rules, PII, audit).
-7. Scale by cells, not heroics.
-8. Measure everything that costs money or can hurt a customer.
-9. Boring, RHEL-compatible components; novelty only in the voice and agent runtime.
-10. Everything as code (infra, prompts, agent configs, evals, policies).
+## 2. Business context
 
-## 3. Logical architecture
+```mermaid
+flowchart LR
+    CUSTOMER[Customers calling or messaging] --> PLATFORM[EverOnn platform]
+    VISITOR[Business website visitors] --> PLATFORM
+    OWNER[Business owners and staff] --> PLATFORM
+    OPERATOR[Assigned human operators] --> PLATFORM
+    TEAM[EverOnn authorised teams] --> PLATFORM
+    PLATFORM --> CARRIER[Phone and SMS carriers]
+    PLATFORM --> AI[Speech and AI providers]
+    PLATFORM --> CALENDAR[Calendars and approved connectors]
+    PLATFORM --> PAYMENT[Hosted payment provider]
+    PLATFORM --> DELIVERY[Website and notification delivery]
+```
+
+The business owner controls business facts and authority. EverOnn operates the platform, manages approved brands and providers, and supplies operator tools. Staffing and delivery of the client's own services remain the responsibilities defined in the BRD. Every customer-facing interaction must retain the correct business and brand identity.
+
+**Source:** BRD §§5–9; specification §§2, 6, 10 and 11.
+
+## 3. Architecture style and guiding rules
+
+The control plane is a **modular monolith**: one business API with enforced module boundaries. The real-time data plane is deployed separately so calls, live conversations and published sites scale independently. A **cell** is a complete capacity group serving a defined set of businesses.
+
+| Rule | Design consequence |
+| --- | --- |
+| One assistant across channels | Voice, chat and SMS share approved knowledge, tools and policies through channel adapters. |
+| Owner-approved information only | Imported facts remain drafts; running sessions use published versions. Unknown answers create follow-up rather than invented facts. |
+| Human help is part of the core design | Routing, offers, authority, call control and wrap-up are first-class components. |
+| Providers can be replaced | Vendor SDKs remain behind internal provider contracts. Alternative telephony/LLM implementations are stubbed or contract-tested by P1; the other providers by P2. |
+| Client and brand separation is structural | Request context, repositories, caches, files, jobs and operator grants enforce the same tenant/brand scope. |
+| Safety rules are executable | Code validates tool calls and outputs; prompts cannot grant extra authority. |
+| Live service survives a control-plane outage | Calls use approved cached configuration and safe fallback; published sites have independent static delivery. |
+| Events survive committed changes | A transactional outbox and idempotent consumers prevent lost events and duplicate effects. |
+| Capacity grows by cells | Routing records and `tenants.cell_id` exist from P1; another cell is provisioned through infrastructure as code. |
+| One suite supports many industries | Versioned vertical packs and brand configuration change behaviour without separate software per industry. |
+| Facts and claims carry evidence | Prospect facts, comparisons and generated claims retain sources and dates. Unknowns remain unknown. |
+
+**Source:** specification §11.1–11.2, AR-001–010, TEN-001–007 and VRT-001–010.
+
+## 4. Containers and deployment boundaries
 
 ```mermaid
 flowchart TB
-  subgraph Users
-    CALL[Callers: PSTN and SMS]
-    VIS[Site visitors]
-    OWN[Owners and staff]
-    OPS[Operators and leads]
-    TEAM[EverOnn team]
-  end
-
-  CAR[Carriers: Twilio, Telnyx]
-  EDGE[Edge and CDN: WAF, TLS, site router]
-
-  subgraph DP[Real-time data plane]
-    MEDIA[Media layer: LiveKit SFU and SIP]
-    VOICE[Voice agent workers: STT, LLM, TTS]
-    MGW[Model gateway]
-    DESK[Desk gateway and call control]
-  end
-
-  subgraph CP[Control plane: NestJS modular monolith]
-    KNW[Knowledge]
-    AGT[Agents and guardrails]
-    ONB[Onboarding and tenancy]
-    INB[Inbox, booking, follow-up]
-    CHT[Chat and widget]
-    WEB[Website engine]
-    BIL[Billing and metering]
-    API[Public API and webhooks]
-    VRT[Brands and vertical packs]
-    ESC[Escalation router]
-    ACQ[Acquisition and migration]
-    INT[Integration hub]
-  end
-
-  subgraph ASYNC[Events and async]
-    BUS[Outbox and event bus]
-    WRK[Workers: BullMQ]
-    NOT[Notifications]
-    ANL[Analytics]
-  end
-
-  subgraph DATA[Data tier]
-    DB[(MariaDB: records and vectors)]
-    RED[(Valkey or Redis)]
-    OBJ[(Object storage)]
-    VAULT[(Vault or OpenBao)]
-  end
-
-  subgraph EXT[External providers behind interfaces]
-    SPEECH[STT and TTS]
-    LLM[LLMs]
-    PAY[Stripe]
-    MAIL[Email and SMS]
-    CONN[Calendar, maps, connectors]
-  end
-
-  CALL --> CAR --> MEDIA
-  VIS --> EDGE
-  OWN --> EDGE
-  OPS --> EDGE
-  TEAM --> EDGE
-  EDGE --> DESK
-  EDGE --> CP
-
-  MEDIA <--> VOICE --> MGW
-  VOICE <-->|tool calls, cached config| CP
-  DESK <--> ESC
-
-  MGW --> SPEECH
-  MGW --> LLM
-  BIL --> PAY
-  NOT --> MAIL
-  INT --> CONN
-
-  CP --> BUS --> WRK
-  WRK --> NOT
-  WRK --> ANL
-  CP --> DB
-  CP --> RED
-  CP --> OBJ
-  WRK --> DB
+    subgraph CLIENTS[People and customer channels]
+        APPS[Owner dashboard and staff apps]
+        DESKAPP[Live Agent Desk]
+        WIDGET[Website chat and forms]
+        PSTN[Phone callers]
+        SMS[Text customers]
+    end
+    EDGE[Edge routing TLS WAF and limits]
+    CARRIERS[Telephony and SMS adapters]
+    SITES[Static website bundles and CDN]
+    subgraph REALTIME[Real-time data plane]
+        MEDIA[Media layer and SIP]
+        VOICE[Voice agent workers]
+        MODEL[Shared model gateway]
+        DESK[Desk gateway and call control]
+        CACHE[Versioned approved configuration cache]
+    end
+    subgraph CONTROL[Control plane]
+        API[Modular business API]
+        JOBS[Durable background workers and timers]
+        EVENTS[Transactional outbox and event consumers]
+    end
+    subgraph DATA[Private data tier]
+        DB[(MariaDB primary and replica)]
+        REDIS[(Separated cache queue and presence stores)]
+        OBJECTS[(Private recordings exports and site bundles)]
+        SECRETS[Identity and secrets services]
+    end
+    PROVIDERS[AI speech payment email and connector providers]
+    APPS --> EDGE
+    DESKAPP --> EDGE
+    WIDGET --> EDGE
+    EDGE --> API
+    EDGE --> DESK
+    EDGE --> SITES
+    PSTN --> CARRIERS --> MEDIA
+    SMS --> CARRIERS --> API
+    MEDIA <--> VOICE
+    DESK <--> MEDIA
+    VOICE --> CACHE
+    VOICE --> MODEL
+    VOICE --> API
+    API --> MODEL
+    API --> CACHE
+    API --> DB
+    API --> SECRETS
+    DESK --> API
+    DESK --> REDIS
+    API --> EVENTS --> JOBS
+    JOBS --> DB
+    JOBS --> OBJECTS
+    JOBS --> REDIS
+    API --> OBJECTS
+    MODEL --> PROVIDERS
+    JOBS --> PROVIDERS
+    OBJECTS --> SITES
 ```
 
-**Cross-cutting:** Keycloak (identity, MFA), audit trail and consent ledger, OpenTelemetry with Prometheus, Grafana, Loki and Tempo (plus Sentry), RHEL with Podman and infrastructure as code.
+The voice worker does not become a second business database. It reads versioned cached settings, calls authorised business tools and buffers/replays events during the specified outage scenarios. The real-time model gateway and approved configuration cache must remain available independently of the configuration API, with the specified provider/safe-flow fallback. The desk browser is also not authoritative: server-owned state and snapshots govern acceptance, connection and reconnect.
 
-## 4. Control plane vs data plane
+The static site path must remain available independently of the control plane. Preview access controls, domain verification, approved publication, cache invalidation and rollback are still enforced by the website module.
 
-| | Control plane | Data plane |
-|---|---|---|
-| Purpose | Config, business logic, dashboards, billing, admin | Live calls, chat streams, site serving |
-| Latency | 100–500 ms tolerable | Latency-critical |
-| Consistency | Strongly consistent (MariaDB) | Mostly stateless; reads a read-through config cache |
-| Scales by | Replicas and cells | Workers by concurrent sessions, media nodes by participants |
-| Failure rule | May degrade | Must keep answering calls with cached config and a fallback flow |
+**Source:** specification §§11.3–11.7, 16.7, 18, 20.6 and 23.5.
 
-## 5. Component catalog
+## 5. Control-plane components and module responsibilities
 
-| Component | Responsibility | Default technology | Scales by |
-|---|---|---|---|
-| Edge and CDN | TLS, WAF, caching, site routing, rate limits | Cloudflare or Nginx/Caddy | Add edge nodes |
-| Control-plane API | Tenants, agents, knowledge, inbox, booking, HITL, billing, sites, admin | TypeScript, NestJS on Fastify | Replicas, cells |
-| Identity | Login, MFA, sessions, roles | Keycloak | Replicas |
-| Voice agent runtime | STT → LLM → TTS loop, tools, guardrails | Python, LiveKit Agents (or Pipecat) | Workers by concurrent calls |
-| Media layer | WebRTC and SIP, rooms, recording, operator audio | LiveKit server and SIP | Media nodes |
-| Telephony adapters | Numbers, SIP trunks, SMS, porting | Twilio and Telnyx behind `TelephonyProvider` | Provider capacity |
-| Model gateway | Routing, fallback, budgets, prompt caching, redaction, cost capture | In-house service | Replicas |
-| Knowledge service | Ingestion, chunking, embedding, tenant-filtered retrieval | API module, workers, MariaDB vectors (Qdrant if needed) | Workers, shards |
-| Escalation router | Operator selection, cascades, deadline timers | API module with durable timers | Replicas |
-| Desk gateway | Operator WebSocket, presence, offers, commands | Node service, Redis presence | By connections |
-| Context service | Builds the operator context payload | API module with cache | Replicas |
-| Call control | Operator join, whisper, transfer, hand-back | Service calling the media layer | Replicas |
-| Site generator and publisher | Business profile → Site Spec → static bundle → CDN | Astro or Next.js export, object storage, edge router | Workers, CDN |
-| Widget service | Public chat and form endpoints | API module, edge-cached script | Replicas |
-| Billing and metering | Usage events, entitlements, Stripe sync | API module, workers | Workers |
-| Integration hub | Connector runtime, catalog, health | Service with connector SDK | Replicas |
-| Event bus | Reliable domain events | MariaDB outbox, Redis Streams (later NATS or Kafka) | Consumers |
-| Workers | Summaries, extraction, follow-up, generation, metering, QA | BullMQ on Valkey/Redis | Queue depth |
-| Evaluation service | Text and audio simulations, red-team gates | Python | Runners |
+```mermaid
+flowchart TB
+    ENTRY[Authenticated API or verified provider event] --> POLICY[Resolve actor tenant brand and permissions]
+    POLICY --> SETUP[Accounts tenancy and onboarding]
+    POLICY --> ASSISTANT[Knowledge agents tools and guardrails]
+    POLICY --> CHANNELS[Chat messaging and escalation routing]
+    POLICY --> WORK[Inbox booking and follow-up]
+    POLICY --> WEB[Website generation and publication]
+    POLICY --> COMMERCIAL[Plans billing metering and analytics]
+    POLICY --> GROWTH[Brands acquisition and migration]
+    POLICY --> ORDER[Restaurant menu and ordering]
+    POLICY --> INTEGRATION[Public API and connector framework]
+    SETUP --> REPOSITORIES[Tenant-scoped repositories and module interfaces]
+    ASSISTANT --> REPOSITORIES
+    CHANNELS --> REPOSITORIES
+    WORK --> REPOSITORIES
+    WEB --> REPOSITORIES
+    COMMERCIAL --> REPOSITORIES
+    GROWTH --> REPOSITORIES
+    ORDER --> REPOSITORIES
+    INTEGRATION --> REPOSITORIES
+    REPOSITORIES --> COMMIT[Business transaction and outbox]
+    COMMIT --> ASYNC[Idempotent jobs events notifications and reporting]
+```
 
-## 6. Technology stack
+| Module | Owns | Boundary and important controls |
+| --- | --- | --- |
+| ONB / TEN / ACC | Claim, account lifecycle, locations, invitations and access | Verification and approval precede go-live; every request resolves its actor and tenant. |
+| KNW | Profiles, imported sources, chunks, indexes and approval | Tenant-filtered retrieval; source/version evidence; no unapproved knowledge. |
+| AGT / POL | Agent versions, prompt layers, tools and policy | Typed inputs/outputs, plan permissions, owner approval and hard safety checks. |
+| VOX adapters | Numbers, forwarding, carrier events and voice business tools | Real P1 carrier integrations, verified forwarding and stage-specific failover. |
+| CHT | Widget sessions, SMS threads and chat delivery | Shared assistant policy; sender identity, consent and human takeover. |
+| HIL / DSK | Escalations, offers, roster grants, presence and handling | Durable deadlines, one acceptance winner, client lock, authority matrix and audited commands. |
+| INB / BKG / FUP | Contacts, requests, assignment, bookings and sequences | Verified merge keys, atomic booking, encrypted calendar grants and consent at send time. |
+| WEB | Site Spec, renderer, versions, previews, publication and domains | Durable jobs, truthful claims, private previews, separate site domain and safe rollback. |
+| BIL / CST | Plans, entitlements, usage, payments and service costs | Signed payment events, duplicate-safe metering, visible estimates and emergency-safe limits. |
+| ANL / ADM | Outcome reports, internal operations and release controls | Restricted admin app, reasoned support access, safe flags and approval evidence. |
+| VRT | Brands, vertical packs, defaults and readiness | Brand isolation; legal/sender identity; approved pack versions and launch gates. |
+| ACQ | Targets, sourced prospects, pipeline, comparisons and outreach | Minimal data, licensed sources, dated claims and approved channels. |
+| MIG | Asset inventory, authorisations, import, parallel run and cut-over | No unapproved changes; continuity, contract awareness, sign-off and rollback. |
+| ORD | Versioned menu, carts/orders, staff acceptance and kitchen delivery | P2 pickup scope, full read-back, allergy handoff, reliable receipt and hosted payments. |
+| INT / API | Provider/connector contracts, API keys, webhooks and catalog | Authorised provider access, minimised fields, idempotency and manual fallback. |
+| COM / SEC | Consent, compliance profiles, rights, retention, audit and security | Cross-cutting controls applied at each boundary; regulated features stay gated. |
 
-| Layer | Choice |
-|---|---|
-| OS and containers | RHEL (SELinux enforcing), Podman with Quadlet; path to Kubernetes/OpenShift (AR-010) |
-| Languages | TypeScript (control plane, web, widget) and Python 3.12+ (voice and agent runtime, evals) |
-| Repo | Monorepo (pnpm workspaces plus Turborepo or Nx) |
-| API | NestJS on Fastify, Zod validation, OpenAPI 3.1, REST `/v1`, cursor pagination, idempotency keys |
-| DB access | Kysely or Drizzle (MySQL dialect), tenant-scoped repository layer (mandatory) |
-| Web apps | Next.js (App Router), React, Tailwind, Radix/shadcn, TanStack Query; PWA for the inbox |
-| Realtime | WebSocket or SSE; LiveKit client SDK for operator audio |
-| Chat widget | Preact or Web Components in Shadow DOM, under 40 KB gzipped |
-| Jobs and events | BullMQ; transactional outbox → Redis Streams (P1), NATS JetStream or Redpanda (P2/P3) |
-| Database | MariaDB (current LTS) primary plus replicas; native VECTOR type for RAG |
-| Cache and queues | Valkey or Redis |
-| Object storage | S3-compatible (recordings, site bundles, exports, backups) |
-| Identity and secrets | Keycloak; Vault or OpenBao (Transit envelope encryption, dynamic DB credentials) |
-| Voice and AI | LiveKit, Twilio and Telnyx, Deepgram (STT), ElevenLabs/Cartesia (TTS), multi-vendor LLMs via the model gateway |
-| Payments, email | Stripe (Billing, Tax); SES or Postmark |
-| Observability | OpenTelemetry, Prometheus, Grafana, Loki, Tempo, Sentry |
+Modules communicate through internal interfaces and events. They do not query one another's tables directly. Connector availability must reflect actual provider approval; a business still has the required capture-and-notify fallback without a connector.
 
-**Provider interfaces (AR-002):** `TelephonyProvider`, `SttProvider`, `TtsProvider`, `LlmProvider`, `SmsProvider`, `EmailProvider`, `PaymentProvider`, `CalendarProvider`, `GeocodingProvider`. Telephony and LLM need a second implementation stubbed or contract-tested by the end of P1.
+## 6. Required baseline and recommended technology
 
-## 7. Key runtime flows
+The **production baseline is RHEL, Podman/Quadlet and MariaDB**, with SELinux enforcing and firewalld. The specification allows reviewed equivalents and explicit exceptions; naming a default here does not record an approval. Versions are pinned at build time after compatibility checks.
 
-### 7.1 Inbound call handled by the AI
-1. Caller dials the client number; the carrier sends SIP to the media layer.
-2. A room is created and a voice worker is dispatched (`call.started`).
-3. The worker resolves number → tenant, line, agent version, hours and consent regime from the config cache.
-4. The worker plays the greeting and disclosures, then loops STT → LLM (with tools) → TTS with barge-in.
-5. Tool calls go to the API: `lookup_knowledge`, `capture_request`, `check_availability`, `book_appointment`.
-6. On end, workers store the transcript and recording, extract the request and write the summary.
-7. Notifications text the owner within 30 s; metering and the quality sampler run.
+| Layer | Specification default / recommendation | Decision or contract |
+| --- | --- | --- |
+| Production hosts and containers | RHEL; Podman with Quadlet; later Kubernetes/OpenShift path | D-2, D-8, AR-010 |
+| Languages and repository | TypeScript/Node LTS; Python 3.12+; pnpm workspaces with Turborepo/Nx; locked Python dependencies | §20.2; AR-006 |
+| Business API | NestJS on Fastify; reviewed Fastify module alternative; Zod, OpenAPI 3.1, REST `/v1` | §20.2; API-001 |
+| Database access | Kysely/Drizzle; Prisma only after feature validation; mandatory tenant-scoped repository | TEN-001; §20.2–21.2 |
+| Web applications | Next.js App Router, React, TypeScript, Tailwind, Radix/shadcn, TanStack Query | §20.2 |
+| Identity | Keycloak default; reviewed alternatives | D-5; ACC; SEC-003 |
+| Jobs, deadlines and events | BullMQ on Valkey/Redis; durable timers with reconciler; MariaDB outbox to Redis Streams | AR-003; §16.6, §20.2 |
+| Database and search | MariaDB primary/replicas, FULLTEXT and VECTOR; alternative vector store only through decision/exception review | D-2, D-4; §20.5 |
+| Files and secrets | S3-compatible storage; Vault/OpenBao for dynamic credentials and wrapped keys | SEC-005–006; §20.1–20.2 |
+| Media and voice | LiveKit/SIP and LiveKit Agents or Pipecat behind EverOnn interfaces; managed pilot only with evidence and exit plan | D-7, D-15 |
+| Telephone and SMS | Twilio and Telnyx default pair; both integrated by P1 | VOX-001; P2 automatic failover is VOX-036 |
+| Speech and models | Benchmarked STT/TTS choices and task-based multi-vendor model gateway; choose by evaluation results | AR-002; CST-001; §20.3 |
+| Website engine | Validated Site Spec, versioned component library, Astro/Next.js static output, durable generation and independent static delivery | WEB-001–018; §20.4 |
+| Payments and communications | Stripe behind PaymentProvider; SES/Postmark behind EmailProvider; calendar/geocoding contracts | BIL-002; BKG-001; AR-002 |
+| Monitoring | OpenTelemetry, Prometheus, Grafana, Loki, Tempo, approved Sentry option and external probes | §24.3; D-2 where applicable |
 
-### 7.2 AI → human hand-off (multi-client)
-1. The `escalate` tool fires with a trigger and severity; the API creates the escalation with context.
-2. The caller hears a branded hold message.
-3. The routing engine selects an eligible operator (client grant, language, status, capacity).
-4. The context service pushes the full payload; the desk gateway delivers the offer and the screen-pop.
-5. Acceptance is an atomic compare-and-set; the first valid accept wins and the other offers are cancelled.
-6. Call control joins the operator, plays a private announcement, bridges the caller; the AI steps down.
-7. The operator wraps up with a disposition. If no one accepts: next operator → owner → message capture and callback.
+Required provider seams include `TelephonyProvider`, `SttProvider`, `TtsProvider`, `LlmProvider`, `SmsProvider`, `EmailProvider`, `PaymentProvider`, `CalendarProvider` and `GeocodingProvider`. The agent runtime, filesystem/storage choices and later field-service connectors must also retain the interfaces and phase constraints specified in their sections.
 
-### 7.3 Other flows
-- **Chat takeover:** widget → chat agent → trigger → operator offer, with the AI drafting and the operator approving.
-- **Claim, preview, publish:** prospect → draft profile → Site Spec → private preview → owner verifies → static bundle, certificates and hostname.
-- **Missed-call text-back:** call abandoned → consent guard (fails closed) → SMS → chat agent continues.
-- **Provider switch:** verify prospect → preview → written authorisation → import → parallel run → cut over (rollback on failure).
+## 7. Data ownership and contracts
 
-## 8. Data architecture
+MariaDB is the system of record. Object storage holds recordings, static site bundles, exports and backups; the database holds scoped references, classification, retention and key versions. Cache/presence/session data is not the authoritative business record.
 
-- **System of record:** MariaDB. Topology is one primary plus at least one replica in a separate failure domain with semi-synchronous replication, then Galera or cells at P2.
-- **Backups:** nightly full plus continuous binlog shipping (RPO 5 min), encrypted and immutable; monthly restore test (RTO under 60 min per cell).
-- **Time-partitioned tables:** `call_events`, `messages`, `usage_events`, `audit_log`; archive to Parquet or JSONL before drop.
-- **Conventions:** tenant ID on every row, versioned and expand/contract migrations, no cross-module DB access.
-- **Vectors:** MariaDB VECTOR at P1; move to Qdrant if p95 retrieval exceeds 80 ms or scale targets are missed.
-- **Voice path:** no direct DB access except cached config and a small buffered write API.
-- **Events:** state changes emit versioned domain events through the outbox, so events are never lost on commit. Consumers are idempotent and replayable.
+| Domain records | Important relationships and invariants |
+| --- | --- |
+| Tenant, brand, vertical pack, location, user and grant | Tenant carries brand/pack, cell, region, residency and tier. Role and client grant are checked on every request. |
+| Business profile, source, knowledge, agent and policy versions | Draft and approved/published versions remain distinguishable; sessions record the versions they used. |
+| Conversation, message, call, contact and Request | All channels create one validated Request contract; uncertain fields remain explicit. Permitted media references retain access and retention controls. |
+| Escalation, offer, operator and handling | Offers have deadlines; acceptance is atomic; every handling transition retains tenant/line identity and an audit trail. |
+| Appointment and follow-up | Business rules and conflict detection apply; consent is rechecked before each send. |
+| Site Spec, site version, hostname and publication | Verification and owner approval precede public release; previous immutable versions support rollback. |
+| Plan, entitlement, subscription and usage event | Dated plan data drives access; immutable source IDs make accounting duplicate-safe. |
+| Target, prospect, claim, consent and migration | Source/date/evidence and customer authorisation travel with the record; detection is not proof of a paid incumbent relationship. |
+| Menu, order, receipt and payment reference | Live menu version, confirmed line items and modifiers, staff acknowledgement and hosted payment state remain linked. |
+| Audit, outbox, job and compliance profile | Versioned schemas, trace IDs, tenant scope, retention and replay rules govern every consumer. |
 
-## 9. Tenancy and cells
+The full source Request schema is in specification Appendix D; the tool registry in Appendix B, event catalog in Appendix C, API catalog in Appendix I and desk protocol in Appendix J. These are build contracts, not optional examples to replace with incompatible shapes.
 
-- Every request is tenant-scoped through the repository layer (TEN-001).
-- A **cell** is a complete stack (API, workers, DB set, Redis, media and voice workers) serving a subset of tenants.
-- `tenants.cell_id` and a routing map exist from P1 even with one cell. Adding a cell is scripted through IaC (AR-005).
+**Tenant guarantees:** tenant-first keys and indexes; all queries through the scoped repository; automated API/job isolation tests in CI and nightly; documented compensation for MariaDB's lack of native row-level security. Keys, queues, cache entries, object paths and search filters are namespaced by tenant. Brand isolation is tested alongside tenant isolation.
 
-## 10. Security and compliance
+**Schema changes:** reviewed expand/contract migrations; compatibility with current and previous application versions; production-sized synthetic-data checks; encrypted connections and scoped service credentials. Append-heavy tables are partitioned and cold data is verified in the archive before deletion.
 
-- Threat model in P0; pen test in P1; SOC 2 readiness and DR drills in P2.
-- Consent ledger, recording rules, PII redaction hooks in the model gateway, audit log with object lock.
-- OAuth2/OIDC for users; scoped hashed API keys and short-lived JWTs for integrations; widget keys scoped to origins.
-- Webhooks use HMAC signatures, retries and dead-letter queues.
-- Vault dynamic DB credentials, TLS to the database, envelope encryption.
-- Firewalld zones per tier; RTP/UDP open only on the media tier; SSH via MFA bastion with short-lived certificates.
-- Production data never appears in lower environments.
+## 8. Human handoff and the Live Agent Desk
 
-## 11. Scalability and reliability
+The AI first records the escalation reason, severity and captured context. Routing considers client grants, language, skills, presence and capacity. Every offer contains the correct client identity and full required screen-pop/context sections before the operator begins handling it.
 
-| Scale point | Tenants | Peak concurrent calls | Design capacity (2× peak) |
-|---|---|---|---|
+| Stage | Required behaviour |
+| --- | --- |
+| Offer | Idempotent delivery, acknowledgement and expiry; a declined/expired offer continues the configured cascade. |
+| Accept | Atomic compare-and-set: one valid winner, all other offers cancelled. |
+| Connect | Private briefing and authorised media permissions; bridge failure returns the work to the appropriate queue and alerts the lead. |
+| Handle | Client lock, authority matrix, masked fields, correct greeting/sender identity and audited commands. |
+| Reconnect | Server snapshot restores authoritative state; the browser cannot invent or duplicate a handling session. |
+| Wrap-up | Disposition, notes, next action and handling metrics are recorded. |
+| No available person | Owner/next-pool cascade, detailed message and scheduled callback outcome; no caller is trapped. |
+
+D-15 must prove the private-room-then-bridge or selective-subscription design on real calls. Monitoring, whisper, warm transfer and return to AI must respect the tested audio-permission model. Operator staffing and coverage defaults are resolved through D-9, D-16 and D-17.
+
+**Desk targets:** escalation trigger to first offer under 1 second p95; offer-card rendering under 500 ms p95; accepted caller/operator audio connected under 1.5 seconds p95; reconnect/state restoration under 3 seconds; context payload under 100 KB; P2 design for 300 concurrent operators per cell.
+
+## 9. Safety, access and compliance boundaries
+
+| Boundary | Required control |
+| --- | --- |
+| Business activation | Verified ownership, accepted terms, approved knowledge/greeting, tested phone/chat and recorded approval version. |
+| Incoming customer interaction | Resolve tenant/brand/line; apply consent, disclosure, hours, service area, language and published configuration. |
+| AI action | Server-side permissions, typed tool arguments, plan access, safety rules and owner approval where required. |
+| Human action | Current client grant and authority matrix, context lock and immutable intervention record. |
+| Recording | Reviewed jurisdiction rules and refusal handling; store audio only when permitted. |
+| Message or callback | Correct purpose, recorded consent/preferences, suppression and calling/quiet-hour rules; high-risk automated outreach remains gated. |
+| Website publication | Owner approval, verified domains, sourced claims, separate site domain and safe content/embeds. |
+| Payment | Hosted provider pages/links; no card numbers collected by AI or stored by EverOnn. |
+| Connector/export | Verified authorisation, minimised data and the relevant compliance profile. |
+| Regulated launch | Reviewed terms, appropriate agreements/provider chain, tested advice limits and pack readiness approval. |
+| Retention/deletion | Approved class-based policy, legal holds and verified deletion/key erasure where required. |
+
+Prompt injection protection applies to customer messages, imported pages and tool results. Secrets never enter customer responses or source control. The protected administration app, production data tier and key service have separate access/network boundaries. Security, privacy and recording decisions follow the source's named reviewers and counsel process.
+
+## 10. Performance, capacity and recovery
+
+Targets are acceptance/planning targets from the source, not measured production results.
+
+| Service | Required target and phase context |
+| --- | --- |
+| Answered call or safe fallback | 99.9% monthly |
+| Caller-perceived response gap | p50 under 1.0 s; p95 under 1.8 s |
+| Chat first token | p50 under 1.5 s |
+| Owner summary after call | 99% within 30 seconds |
+| Dashboard API | p95 under 400 ms; 99.9% availability |
+| Tenant website | 99.95% availability; required mobile Lighthouse/performance checks |
+| Website preview | Under 2 minutes p50; P2 generation at 1,000/day sustained and 300/hour bursts |
+| Desk | Separate offer-rendering, first-offer, audio-connection and reconnect targets in section 8 |
+| Carrier automatic reroute | P2 within 60 seconds of detected degradation |
+| External webhook | 99% first-attempt success within 60 seconds |
+
+| Capacity illustration | Tenants | Projected peak concurrent calls | Design capacity |
+| --- | --- | --- | --- |
 | Pilot | 50 | 2 | 5 |
-| P1 exit | 300 | 10 | 20 |
+| P1 exit planning model | 300 | 10 | 20 |
 | P2 target | 1,000 | 35 | 70 |
 | Growth | 10,000 | 350 | 700 |
+| Scale-out | 100,000 | 3,500 | 7,000 |
 
-Planning assumptions: 150 calls per tenant per month at 2.5 min, peak 4× average. Replace them with measured pilot data.
+The source assumes 150 calls per tenant/month averaging 2.5 minutes, peak concurrency four times average and design headroom twice peak. Replace assumptions with pilot measurements and maintain the cost/capacity model. The P1 pilot cohort of 20–50 clients is distinct from the 300-tenant capacity illustration.
 
-| SLO | Target |
-|---|---|
-| Call answered by AI or safe fallback | 99.9% monthly |
-| Response gap | p50 < 1.0 s, p95 < 1.8 s |
-| Owner summary delivered | 99% within 30 s |
-| Dashboard API | p95 < 400 ms |
-| Tenant site availability | 99.95% |
-| Desk offer / audio connected | < 500 ms / < 1.5 s (p95) |
+| Recovery phase | Maximum planned data loss (RPO) | Restore target (RTO) |
+| --- | --- | --- |
+| P1 | 15 minutes | 4 hours |
+| P2, one cell | 5 minutes | 1 hour |
 
-Reliability mechanisms:
-- Voice workers drain gracefully for zero-drop deploys (AR-009).
-- LLM first-token hard timeout of 1.2 s, then fallback.
-- Carrier failover between Twilio and Telnyx.
-- Chaos drills in P2.
+Backups are encrypted, access-separated and include an immutable copy. Nightly full backups and continuous binlog shipping support point-in-time recovery. Record monthly isolated full-restores and quarterly point-in-time recovery drills. Calls drain during releases; approved configurations roll back instantly; provider failures use the specified alternate or safe fallback; buffered events reconcile after recovery.
 
-## 12. Deployment topology (P1, RHEL)
+**Source clarification required:** §23.1 gives P2 peak/design concurrency as 35/70, while LT-002 calls for “3x projected P2 peak (about 200 concurrent calls).” Retain the complete LT-002 wording and agree the test concurrency during planning; this guide does not silently change it. LT-005 also requires P1 staging chaos tests, while the wider operational game-day programme is described for P2.
 
-```
-Internet
-  └─ Edge tier: Cloudflare / Nginx, TLS, WAF, site router
-       ├─ App tier:        API, web apps, admin, console
-       ├─ Worker tier:     BullMQ jobs
-       └─ Media/voice tier: LiveKit + SIP, agent workers (RTP/UDP only here)
-            └─ Data tier (private): MariaDB primary + replica, Valkey, Vault, object storage
-Observability tier: Prometheus, Grafana, Loki, Tempo, uptime probes
-```
+## 11. Delivery phases and launch gates
 
-Each tier is a set of Quadlet units, so it can sit on one host at pilot and move to separate hosts at P2 through configuration. Environments are local, CI, dev, staging (sandbox carrier numbers and staging Stripe) and prod.
+| Phase | Required result | Release gate |
+| --- | --- | --- |
+| P0 — Foundations | Applicable P0 decisions, threat/cost/capacity models, real voice and operator-audio spikes, tenant-isolation proof, environments and initial evaluations | Applicable P0 decisions ratified; measured voice result or accepted gap plan; proven operator audio and second-pack configuration; isolation checks pass. |
+| P1 — Pilot | Voice core; approved onboarding/knowledge; small operator pool; chat/site/inbox/booking; two brands/packs; billing/admin/API; acquisition console and migration basics | Applicable source acceptance tests pass; 20+ pilot clients on real numbers for two weeks meeting service targets; specified security issues resolved; runbooks complete. |
+| P2 — Scale | Expanded operator tools, sequences, acquisition/migration analytics, additional packs/connectors, restaurant pickup pilot, bulk generation, failover and second-cell rehearsal | Required load/soak, operator service-period, restaurant accuracy and recovery evidence; SOC 2 readiness assessment as specified. |
+| P3 — Expansion | Separately scoped regulated packs, broader languages/integrations, resellers, enterprise and reviewed outbound features | Approved P3 scope, applicable agreements, compliance/readiness gates and phase acceptance. |
 
-## 13. Phasing
+P1 increments remain the source sequence: **1 voice core → 2 knowledge/onboarding and pilot human desk → 3 chat/site/inbox and brand/migration basics → 4 commercial features, acquisition and hardening**. Security, consent, tenant isolation and evaluations are built throughout.
 
-| Phase | Focus |
-|---|---|
-| P0 Foundations | ADRs, threat model, voice and audio spikes, schema and renderer spikes |
-| P1 Pilot | Voice, chat, SMS, site generation, knowledge, inbox and booking, billing, small Desk pilot, public API |
-| P2 Scale | Multi-carrier failover, supervisor wallboard, copilot, follow-up sequences, more verticals, ordering pilot, SOC 2 readiness |
-| P3 Expansion | More channels and languages, white-label, partner marketplace, HIPAA mode |
+The source's week ranges are estimates for the studio to validate, not approved delivery dates. The [Kanban](everonn-delivery-kanban.md) preserves requirement phases, distinguishes derived supporting work and carries the business/acceptance traceability.
 
-## 14. Decisions to settle in P0 ADRs
+## 12. Required engineering and handover evidence
 
-| ID | Decision |
-|---|---|
-| D-2 | Exceptions to the RHEL/MariaDB baseline (Temporal, Langfuse, Qdrant, ClickHouse, Sentry self-hosted) |
-| D-4 | MariaDB VECTOR vs Qdrant (validate recall and latency at 10M chunks) |
-| D-5 | Keycloak vs Ory or SaaS identity |
-| D-6 | Custom domains and TLS: Cloudflare for SaaS vs self-hosted ACME (Caddy) |
-| D-15 | Operator audio topology: private briefing room then bridge (A) vs selective-subscription join (B) |
-| AR-001 | Written ADR set covering every decision before P1 build |
-| AR-008 | C4 model and a data-flow diagram per channel kept in the repo |
+Every feature must meet its complete requirement and acceptance criteria, pass the relevant automated/manual checks, include telemetry and documentation, use compatible migrations, measure AI cost and update evaluation cases where applicable, be demonstrated on staging and be accepted by the product owner.
 
-## 15. Rationale for this architecture
+The delivery pipeline includes lint/type checks, unit/integration/contract/end-to-end tests, security and secret scanning, dependency/licence checks, signed scanned images and an SBOM. Build once, promote the same artifact, run post-deploy smoke/synthetic-call checks and retain rollback. Domain logic coverage and the complete test-level requirements remain those in §24.2.
 
-- **Modular monolith, not microservices:** a small team gets one deployable, with module seams ready for extraction.
-- **LiveKit room model:** it fits warm transfer, whisper, operator join and takeover natively.
-- **MariaDB plus Valkey plus S3 only at P1:** the minimum number of datastores, and RHEL-friendly.
-- **Provider abstraction and the model gateway:** vendors can be swapped for cost, quality or outage reasons without touching business logic.
-- **Outbox plus event bus:** decouples workers, analytics and webhooks without lost events.
-- **Cells:** capacity grows by adding identical stacks rather than re-architecting.
+Handover includes C4/decision records, API/data/event/tool contracts, prompt/policy catalog, pack authoring instructions, infrastructure, runbooks, on-call procedures and the specified knowledge-transfer/ownership deliverables. Source code, data, accounts and access follow §26.1; this document does not invent contractual approvals.
+
+## 13. Decision register
+
+The following is the complete source decision register. **No decision is marked approved by this documentation revision.** Defaults are the source's planning defaults; each decision still needs its named owner, evidence and recorded outcome. A scope or baseline exception is approved only through the required governance process.
+
+### D-1
+
+**Decision:** Final plan packaging and pricing (Website $19, Front Desk $79, Growth $149 vs the tiers in the August 3 marketing brief), included minutes, overage, outcome pricing
+
+**Source owner:** EverOnn
+
+**Needed by:** Before P1 Increment 4
+
+**Source default:** Live-site tiers; 300 included minutes on Front Desk; overage per minute
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-2
+
+**Decision:** RHEL/MariaDB exceptions (Temporal, Langfuse, Sentry self-host, Unleash, Qdrant, OpenSearch, ClickHouse)
+
+**Source owner:** EverOnn + studio
+
+**Needed by:** P0
+
+**Source default:** No exceptions; use baseline-compatible alternatives or SaaS for non-core functions
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-3
+
+**Decision:** Telecom/privacy counsel engagement; consent, recording, AI-disclosure wording
+
+**Source owner:** EverOnn
+
+**Needed by:** Before P1 pilot
+
+**Source default:** Most conservative rules (all-party consent announcement; explicit SMS opt-in)
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-4
+
+**Decision:** Vector store: MariaDB VECTOR vs Qdrant
+
+**Source owner:** Studio recommends
+
+**Needed by:** P0
+
+**Source default:** MariaDB VECTOR at P1
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-5
+
+**Decision:** Identity provider: Keycloak vs SaaS
+
+**Source owner:** Studio recommends, EverOnn approves
+
+**Needed by:** P0
+
+**Source default:** Keycloak
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-6
+
+**Decision:** Edge and custom-domain approach: Cloudflare for SaaS vs self-hosted ACME
+
+**Source owner:** Studio recommends
+
+**Needed by:** P0
+
+**Source default:** Cloudflare in front, on-demand TLS for custom hostnames
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-7
+
+**Decision:** Voice orchestration: build on LiveKit Agents/Pipecat vs managed platform for pilot
+
+**Source owner:** Studio recommends with evidence
+
+**Needed by:** P0
+
+**Source default:** Build on LiveKit Agents behind AgentRuntime
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-8
+
+**Decision:** Hosting model: EverOnn-owned RHEL servers/colo vs RHEL on cloud IaaS; failure-domain layout
+
+**Source owner:** EverOnn
+
+**Needed by:** P0
+
+**Source default:** RHEL on IaaS in two failure domains, media tier separate
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-9
+
+**Decision:** HITL workforce model: employees vs BPO partner, coverage hours, geographies, languages, pay model
+
+**Source owner:** EverOnn
+
+**Needed by:** Before P2
+
+**Source default:** Mode A plus a small pilot pool of EverOnn operators (Mode B) at P1; design for employees and partner pools
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-10
+
+**Decision:** Default call recording policy and retention (on/off, 90 days)
+
+**Source owner:** EverOnn + counsel
+
+**Needed by:** Before pilot
+
+**Source default:** Recording on with announcement where required; 90-day retention
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-11
+
+**Decision:** Launch geography (US only vs US and Canada) and language (EN/ES)
+
+**Source owner:** EverOnn
+
+**Needed by:** P0
+
+**Source default:** US, English and Spanish
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-12
+
+**Decision:** Tenant-site domain (everonn.site or other), registration and DNS ownership
+
+**Source owner:** EverOnn
+
+**Needed by:** P0
+
+**Source default:** Register separate domain; wildcard DNS
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-13
+
+**Decision:** Persona and voice branding for the default AI voice; owner voice cloning policy
+
+**Source owner:** EverOnn
+
+**Needed by:** P1
+
+**Source default:** Curated voices; no cloning
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-14
+
+**Decision:** Source of truth for business data import (Google Business Profile API vs scraping) and terms compliance
+
+**Source owner:** Studio + counsel
+
+**Needed by:** P0
+
+**Source default:** Official APIs and owner-provided data only; no scraping of sites that prohibit it
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-15
+
+**Decision:** Operator audio topology: private briefing room then bridge (Design A) vs restricted subscription in the caller's room (Design B); softphone approach and telephone fallback (§16.7.2)
+
+**Source owner:** Studio recommends with spike evidence
+
+**Needed by:** P0
+
+**Source default:** Design A unless the spike shows a clear advantage for B
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-16
+
+**Decision:** Default authority matrix for operators and the default greeting and announcement behavior, by vertical
+
+**Source owner:** EverOnn operations lead
+
+**Needed by:** Before the pilot
+
+**Source default:** Conservative: no quotes, no time commitments, booking allowed, dispatch by owner approval; announcement on
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-17
+
+**Decision:** Operator coverage model: hours, languages, location, employment model, and client coverage windows
+
+**Source owner:** EverOnn operations lead
+
+**Needed by:** Before the pilot
+
+**Source default:** Pilot pool in one time zone with extended hours; Spanish-skilled operator on every shift; after-hours falls back to owner mode
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-18
+
+**Decision:** Positioning of EverOnn-operated human operators against the published statement that EverOnn provides technology, not services (public site, terms, liability, regulatory classification of a staffed answering service)
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before the pilot
+
+**Source default:** Offer operators only as a separately contracted managed service with its own terms; keep the technology-only statement for the core product
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-19
+
+**Decision:** Launch verticals: the published site lists locksmith, roadside and towing, HVAC, plumbing, garage door and cleaning services; this document also names electricians and restoration
+
+**Source owner:** EverOnn owner
+
+**Needed by:** P0
+
+**Source default:** Build playbooks for the six published verticals first; add electricians and restoration later
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-20
+
+**Decision:** Plan entitlement mapping for capabilities not stated on the site: two-way texting and missed-call text-back, calendar booking, Spanish, follow-up sequences, review workflows, expanded reporting, local service pages
+
+**Source owner:** EverOnn owner + product owner
+
+**Needed by:** Before P1 billing
+
+**Source default:** Mapping in the business requirements document (plan and phase matrix)
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-21
+
+**Decision:** Private preview intake: instant self-service versus staff-prepared preview, and the fields collected on the form
+
+**Source owner:** EverOnn product owner
+
+**Needed by:** P0
+
+**Source default:** Keep the two-minute target with staff review as a fallback; three fields on the first screen, remaining details after claim
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-22
+
+**Decision:** Meaning of STOP: all non-essential messages from the number, or marketing messages only
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before the pilot
+
+**Source default:** STOP ends all non-essential messages from that number; counsel to confirm and the published messaging-consent page to match
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-23
+
+**Decision:** Public wording of the phone-number promise (keep your number): forwarding at P1, porting at P2
+
+**Source owner:** EverOnn product owner
+
+**Needed by:** Before P1 launch
+
+**Source default:** Say forwarding is supported now and porting is planned
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-24
+
+**Decision:** EverOnn's own legal documents: extend the privacy policy, terms and messaging consent to platform data (recordings, transcripts, AI processing, processor role); add a client agreement and data-processing terms
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before the pilot
+
+**Source default:** Counsel-drafted set covering the platform, published before the first pilot client
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-25
+
+**Decision:** Demonstration assets: live demo number and audio samples, including a locksmith sample
+
+**Source owner:** EverOnn product owner
+
+**Needed by:** P1
+
+**Source default:** Add a locksmith sample; live demo number when the demo tenant is ready
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-26
+
+**Decision:** First verticals and their order (waves): auto repair and home and urgent services in P1, accounting in P2, restaurants pilot in P2, regulated verticals in P3
+
+**Source owner:** EverOnn owner
+
+**Needed by:** P0
+
+**Source default:** Waves as in §5.6
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-27
+
+**Decision:** Vertical brand names, domains, how the brand and EverOnn are presented, and trademark clearance
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before each brand launches
+
+**Source default:** EverOnn named as contracting entity on every brand; clearance before launch
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-28
+
+**Decision:** First conquest targets per vertical, and written confirmation of each data source's license terms
+
+**Source owner:** EverOnn owner
+
+**Needed by:** P0
+
+**Source default:** Repair Shop Websites and Autoshop Solutions (auto repair); Chinese Menu Online (restaurants); CPA Site Solutions (accounting); no use of technology-list phone numbers
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-29
+
+**Decision:** Outreach channels and staffing
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before outreach begins
+
+**Source default:** Email and manually dialed calls only; no AI-voice or automated-text outreach; registrations where required
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-30
+
+**Decision:** Restaurant pilot design: order-receipt path, payment approach, accuracy thresholds, choice of three pilot restaurants
+
+**Source owner:** EverOnn product owner
+
+**Needed by:** Before the pilot
+
+**Source default:** Staff-accept screen plus printer; pay at pickup or by payment link; thresholds set before the pilot
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-31
+
+**Decision:** Health-care readiness: which providers sign business associate agreements, timing, and whether veterinary launches before HIPAA-covered practices
+
+**Source owner:** EverOnn owner + counsel
+
+**Needed by:** Before wave C
+
+**Source default:** Veterinary first; health-care packs only after the agreement chain is proven
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-32
+
+**Decision:** Migration policy: who performs and pays for migration, parallel-run period, treatment of early-termination fees
+
+**Source owner:** EverOnn owner
+
+**Needed by:** Before the first conversion
+
+**Source default:** EverOnn performs migration at no charge; never pays or advises breach of a contract; fees are counted in the comparison
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-33
+
+**Decision:** Per-vertical pricing and switching offers
+
+**Source owner:** EverOnn owner
+
+**Needed by:** Before each brand launches
+
+**Source default:** Per-brand price books benchmarked to incumbents; offers only with substantiated comparisons
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+### D-34
+
+**Decision:** Accountants' client portal: connector first or a native portal
+
+**Source owner:** EverOnn product owner
+
+**Needed by:** Before the accounting pack
+
+**Source default:** Connector first
+
+**Status:** Awaiting a recorded decision; no approval asserted.
+
+## 14. Source and maintenance
+
+The source specifications govern the complete build contracts and acceptance. This architecture is a readable design guide, not a waiver of requirements. Update it with approved decisions and releases, alongside the channel data-flow guide and delivery Kanban.
