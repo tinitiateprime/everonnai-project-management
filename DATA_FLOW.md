@@ -34,11 +34,11 @@ Full draft/published knowledge and agent-version control remain required. Websit
 1. The owner provides a brief or approved website change request.
 2. The server reads business facts, selected service skills, reference notes and saved design preferences.
 3. Gemini produces content and original page HTML/CSS. Pexels supplies photography when requested.
-4. The platform checks factual content, routes and safe code; bounded repairs/fallbacks handle some failures.
+4. The platform checks factual content, routes and safe code; bounded repairs and limited provider retries handle temporary failures.
 5. A successful result is saved as a private draft and displayed for review. Progress messages alone do not count as a saved website.
 6. The owner selects and approves the design. Publishing saves a release; a newer draft does not replace it automatically.
 
-The current workflow checks a verification state before publication. Independent ownership proof and complete preview protections remain to be added. Generation uses saved progress and short requests; completed pages survive refreshes and server restarts. Resume continues the same build when business facts still match. Closing the page pauses progress between steps; an unattended worker remains planned.
+The current workflow checks a verification state before publication. Independent ownership proof and complete preview protections remain to be added. Generation saves the main content and each service separately, then saves original stylesheets and individual pages. Accepted content and pages survive refreshes and server restarts. Resume continues the same build when business facts still match. Closing the page pauses progress between steps; an unattended worker remains planned.
 
 Owners/managers can clear saved website preferences for the selected business or project scope. The server checks permission and the current revision; clearing preferences leaves the published release in place.
 

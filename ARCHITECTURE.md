@@ -32,7 +32,7 @@ The server authorises access before reading business data or creating provider s
 | Server APIs | Check the user's role/business, validate requests and coordinate workflows |
 | Business database | Store separate business workspaces, profiles, services, knowledge, contacts, leads, conversations and appointments |
 | AI runtime | Combine approved business facts with shared rules, service skills, verified reference notes and task-specific workflow availability |
-| Website Studio | Generate original HTML/CSS through saved resumable steps, validate facts/code, review drafts and publish approved releases |
+| Website Studio | Generate main content, service details and original HTML/CSS through saved steps; validate, review and publish approved releases |
 | Assistant channels | Gemini text replies and ElevenLabs browser voice with lead capture and booking actions |
 | Google integrations | Authorised calendar availability/event creation and Gmail owner summaries |
 | Usage services | Record provider usage, recover pending records and reconcile through scheduled work/webhooks |
