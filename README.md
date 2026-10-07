@@ -1,34 +1,33 @@
-# EverOnnAI - Project guide
+# EverOnn Project Documentation
 
-Reviewed 7 October 2026.
+This repository separates the current EverOnnAI implementation review from the supplied EverOnn platform architecture, data flow and delivery plan.
 
-EverOnnAI helps service businesses create websites, answer customer enquiries, capture leads and manage appointments. HVAC is the current service example.
+## Current project
 
-## Read these five documents
+The existing five guides are grouped in `current project/` and prefixed with `current-`. They record the implementation review dated **7 October 2026**, including implemented behaviour, remaining work and decisions to resolve.
 
-| Document | What it explains |
+| Document | Purpose |
 | --- | --- |
-| **README.md** - this page | Overall project status and where to start |
-| [Architecture](ARCHITECTURE.md) | How the current application is organised |
-| [Data flow](DATA_FLOW.md) | How business information, websites, enquiries and bookings move through the system |
-| [Technology comparison](TECH_STACK.md) | Technology used today, technology requested in the documents, and differences to resolve |
-| [Completed and remaining work](DELIVERY_STATUS.md) | What is implemented, what the requirements still need, and the next priorities |
+| [Current project guide](current%20project/current-README.md) | Project overview, status definitions and reading guide |
+| [Current architecture](current%20project/current-ARCHITECTURE.md) | Application structure, module responsibilities and access boundaries |
+| [Current data flow](current%20project/current-DATA_FLOW.md) | Business setup, websites, customer interactions, bookings and usage |
+| [Current technology comparison](current%20project/current-TECH_STACK.md) | Technologies in use, proposed choices and differences to resolve |
+| [Current delivery status](current%20project/current-DELIVERY_STATUS.md) | Implemented, partly complete and planned work, with supporting references |
 
-## Current position
+## EverOnn project
 
-The application includes business accounts, approved knowledge, service-specific AI instructions, original AI-generated website drafts, publishing, chat/browser voice, lead capture, Google booking/email connections, usage tracking and a customer project-document viewer.
+The three supplied documents are grouped in `everonn project/`. They describe the recommended platform design, intended end-to-end workflows and delivery backlog. Their original contents are preserved.
 
-Further work covers real telephone service, the staffed operator desk, subscriptions, stronger ownership verification, custom domains, additional services, complete security/recovery checks and client acceptance.
+| Document | Purpose |
+| --- | --- |
+| [EverOnn architecture](everonn%20project/everonn-architecture.md) | Recommended platform architecture, component responsibilities, technology choices, security and deployment |
+| [EverOnn end-to-end data flow](everonn%20project/everonn-dataflow.md) | Business activation, customer handling, human escalation, follow-up, billing and quality improvement |
+| [EverOnn delivery Kanban](everonn%20project/everonn-delivery-kanban.md) | Module and ticket backlog across P0 Foundations, P1 Pilot, P2 Scale and P3 Expansion |
 
-## How to read the status
+The supplied Kanban contains **15 major modules, 73 submodules/workstreams and 360 detailed tickets**. Its workflow is **Pending → In Progress → Ready for Deploy → Ready for Test → Done**, and all modules and tickets initially remain **Pending** until execution status is updated.
 
-- **Implemented:** the described feature exists in the current application.
-- **Partly complete:** some behaviour exists; the full document requirement needs more work.
-- **Planned:** the required workflow remains to be built.
-- **Decision needed:** the current approach differs from the documents and needs an agreed direction.
+## Reading the documents together
 
-Implementation and client acceptance are separate. The guides describe one current-project view; they do not create new scope, deadlines or approvals.
+Start with the current project guide and delivery status to understand the documented implementation. Then read the EverOnn architecture, data flow and delivery Kanban to understand the proposed platform and backlog.
 
-## Basis of this review
-
-This guide compares the current code and maintained architecture guides with the supplied **EverOnn Business Requirements Document** and **EverOnn Platform BRD and Technical Specification**, both version 1.0, dated 26 September 2026.
+Proposed architecture and Kanban entries do not establish that a feature is implemented or accepted. Use the current project guides for the documented implementation status and the supplied EverOnn documents for the intended platform design and delivery scope.

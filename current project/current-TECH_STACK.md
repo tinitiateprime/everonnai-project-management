@@ -1,6 +1,6 @@
 # Technology used and document comparison
 
-[Project guide](README.md) | [Architecture](ARCHITECTURE.md) | [Data flow](DATA_FLOW.md) | [Delivery status](DELIVERY_STATUS.md)
+[Project guide](current-README.md) | [Architecture](current-ARCHITECTURE.md) | [Data flow](current-DATA_FLOW.md) | [Delivery status](current-DELIVERY_STATUS.md)
 
 This table compares the implemented technology with the supplied BRD/technical specification. A difference calls for an agreed decision or implementation work; it does not automatically authorise replacing the current technology.
 
@@ -32,7 +32,7 @@ This table compares the implemented technology with the supplied BRD/technical s
 - **Voice:** select the phone/media runtime and operator audio design using real call evidence (D-7/D-15).
 - **Website generation:** reconcile the document's component renderer with the agreed original AI HTML/CSS direction.
 
-The documents' default choices are proposals until approved. Current Gemini usage is the user's agreed direction. Remaining product work and approvals are tracked in [DELIVERY_STATUS.md](DELIVERY_STATUS.md).
+The documents' default choices are proposals until approved. Current Gemini usage is the user's agreed direction. Remaining product work and approvals are tracked in [current-DELIVERY_STATUS.md](current-DELIVERY_STATUS.md).
 
 ## How the comparison is grounded
 

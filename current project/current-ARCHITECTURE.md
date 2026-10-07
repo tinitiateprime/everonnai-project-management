@@ -1,6 +1,6 @@
 # Current architecture
 
-[Project guide](README.md) | [Data flow](DATA_FLOW.md) | [Technology comparison](TECH_STACK.md) | [Delivery status](DELIVERY_STATUS.md)
+[Project guide](current-README.md) | [Data flow](current-DATA_FLOW.md) | [Technology comparison](current-TECH_STACK.md) | [Delivery status](current-DELIVERY_STATUS.md)
 
 ## How the application is built
 
@@ -54,4 +54,4 @@ Website design preferences and recent approved change requests are saved per bus
 
 ## Architecture work still required
 
-The documents propose additional queue/workflow, telephone/media, operator and infrastructure components. Their full implementations are not present in the current architecture. The database, hosting, identity, voice and website-renderer differences are explained in [the technology comparison](TECH_STACK.md).
+The documents propose additional queue/workflow, telephone/media, operator and infrastructure components. Their full implementations are not present in the current architecture. The database, hosting, identity, voice and website-renderer differences are explained in [the technology comparison](current-TECH_STACK.md).

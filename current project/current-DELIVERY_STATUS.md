@@ -1,6 +1,6 @@
 # Completed and remaining work
 
-[Project guide](README.md) | [Architecture](ARCHITECTURE.md) | [Data flow](DATA_FLOW.md) | [Technology comparison](TECH_STACK.md)
+[Project guide](current-README.md) | [Architecture](current-ARCHITECTURE.md) | [Data flow](current-DATA_FLOW.md) | [Technology comparison](current-TECH_STACK.md)
 
 This is the simple comparison with the two requirement documents. "Implemented" describes the named feature. The overall area remains partly complete until its full requirements are delivered and accepted.
 
@@ -79,6 +79,6 @@ All 76 business requirement IDs are covered once in the grouped comparison above
 | Accessibility and acceptance | BR-074 |
 | Ownership and handover | BR-075 |
 
-The source documents are `EverOnn-Business-Requirements-Document.docx` and `EverOnn-Platform-BRD-and-Technical-Specification.docx`, version 1.0 dated 26 September 2026. Technology differences are in [TECH_STACK.md](TECH_STACK.md).
+The source documents are `EverOnn-Business-Requirements-Document.docx` and `EverOnn-Platform-BRD-and-Technical-Specification.docx`, version 1.0 dated 26 September 2026. Technology differences are in [current-TECH_STACK.md](current-TECH_STACK.md).
 
 The [earlier detailed engineering records](https://github.com/tinitiateprime/everonnai-project-management/tree/43e00006e152765c3fd012ed9ca6ea15a0de7fd8) remain in Git history for source definitions, acceptance scenarios and ticket-level evidence. The current guide consists of these five Markdown documents.

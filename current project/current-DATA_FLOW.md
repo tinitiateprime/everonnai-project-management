@@ -1,6 +1,6 @@
 # Current data flow
 
-[Project guide](README.md) | [Architecture](ARCHITECTURE.md) | [Technology comparison](TECH_STACK.md) | [Delivery status](DELIVERY_STATUS.md)
+[Project guide](current-README.md) | [Architecture](current-ARCHITECTURE.md) | [Technology comparison](current-TECH_STACK.md) | [Delivery status](current-DELIVERY_STATUS.md)
 
 ## The starting point: business information
 
