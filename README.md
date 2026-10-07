@@ -1,6 +1,6 @@
 # EverOnnAI - Project guide
 
-Reviewed 6 October 2026.
+Reviewed 7 October 2026.
 
 EverOnnAI helps service businesses create websites, answer customer enquiries, capture leads and manage appointments. HVAC is the current service example.
 

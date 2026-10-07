@@ -38,7 +38,7 @@ Full draft/published knowledge and agent-version control remain required. Websit
 5. A successful result is saved as a private draft and displayed for review. Progress messages alone do not count as a saved website.
 6. The owner selects and approves the design. Publishing saves a release; a newer draft does not replace it automatically.
 
-The current workflow checks a verification state before publication. Independent ownership proof and complete preview protections remain to be added. Generation retries preserve pages during the current request; recovery after a process restart needs durable jobs.
+The current workflow checks a verification state before publication. Independent ownership proof and complete preview protections remain to be added. Generation uses saved progress and short requests; completed pages survive refreshes and server restarts. Resume continues the same build when business facts still match. Closing the page pauses progress between steps; an unattended worker remains planned.
 
 Owners/managers can clear saved website preferences for the selected business or project scope. The server checks permission and the current revision; clearing preferences leaves the published release in place.
 

@@ -13,7 +13,7 @@ This is the simple comparison with the two requirement documents. "Implemented" 
 | AI safety and changes | Shared/HVAC guardrails, explicit Markdown loading, permission-aware action guidance, factual/code validators and selected executable evaluations are implemented. | Larger real-model/audio datasets, plan-aware typed tools and release-quality gates. | Partly complete |
 | Phone calls and languages | Browser voice, contact extraction and selected emergency guidance are implemented. | Real inbound lines, bilingual calls, transfers, accurate audio capture and tested fallback. | Partly complete |
 | Chat and texting | Website chat and lead capture are implemented. | Standalone lightweight widget, two-way SMS, consent/opt-out and human takeover. | Partly complete |
-| Websites | Original generated drafts, platform forms/assistant controls, safe rendering, publishing and rollback are implemented. | Premium design approval, durable generation, custom domains, preview protection and search/capacity checks. | Partly complete |
+| Websites | Original generated drafts, saved generation/resume, safe rendering, platform controls, publishing and rollback are implemented. | Premium design approval, unattended generation, custom domains, preview protection and search/capacity checks. | Partly complete |
 | Human operator service | Basic handoff state and business transfer information exist. | Shared desk, safe routing/audio, per-business authority, supervision, staffing and recovery. | Partly complete |
 | Inbox, booking and follow-up | Contacts/leads, selected inbox updates, Google booking and owner email summaries are implemented. | Complete post-call summaries, inbox assignment/notes, operator results, follow-up sequences, reminders and booking rules. | Partly complete |
 | Plans and pricing | Gemini/ElevenLabs usage, retry tracking, recovery and cost labels are implemented. | Subscriptions, invoices, enforced allowances, cost/margin reporting, fraud limits and accurate public claims. | Partly complete |
@@ -34,7 +34,7 @@ The read-only customer GitHub document viewer and this simplified guide are addi
 ## What to do next
 
 1. **Agree architecture and pilot scope.** Resolve the important technology differences; confirm the first service, required business outcomes and responsible people.
-2. **Complete the website/assistant experience.** Make website generation recoverable, approve premium designs, stabilise approved knowledge and finish verification/domains.
+2. **Complete the website/assistant experience.** Add unattended generation, approve premium designs, stabilise approved knowledge and finish verification/domains.
 3. **Complete the agreed front-desk service.** Prove real phone handling, language support, booking, notifications and the required human fallback/desk.
 4. **Complete commercial and operating readiness.** Deliver plans/payment/limits, security/consent, recovery and the required reporting.
 5. **Accept the pilot before expansion.** Demonstrate agreed scenarios, resolve issues and sign off; add further brands, migration and restaurant scope in approved stages.
@@ -50,7 +50,7 @@ Dates, effort and team assignments need agreement. The original phase estimates 
 - [ ] Provider results, costs, recovery and support procedures are verified.
 - [ ] Client acceptance is recorded against the delivered version.
 
-Recorded engineering checks from 6 October: **133 tests passed; all 18 AI evaluation cases passed, including two real Gemini checks; lint and production build passed.** The deployed assistant replied successfully. Newer configured Gemini models returned temporary high-demand errors; the existing fallback worked. A page-repair improvement kept the same safety rules and supplied clearer feedback. Real sample generation produced three seven-route designs, passing 42 desktop/mobile checks without overflow or broken images. Website and customer-repository browser regressions also passed with disposable data and simulated providers. These checks cover selected features; premium design approval, the complete generation request on the deployed application, execution of the 60 source acceptance scenarios and client sign-off remains required.
+Recorded engineering checks from 7 October: **143 tests passed; 16 deterministic AI evaluations passed; lint and production build passed.** Website browser checks recovered an empty gateway response and resumed a build after reload. Real sample generation resumed seven saved pages, completed three seven-route designs and passed 42 desktop/mobile checks without overflow or broken images. Earlier live assistant checks and customer-repository regressions also passed. These checks cover selected features; premium design approval, the complete generation flow on the deployed application, execution of the 60 source acceptance scenarios and client sign-off remains required.
 
 ## Source references for the delivery team
 
